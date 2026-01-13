@@ -1,0 +1,454 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Instagram, 
+  Youtube, 
+  TrendingUp, 
+  Users, 
+  Globe, 
+  CheckCircle2, 
+  Share2, 
+  Mail, 
+  Award, 
+  ArrowUpRight, 
+  MapPin, 
+  Target,
+  Palette,
+  Layers,
+  Settings,
+  Eye,
+  Save,
+  RefreshCw,
+  Link as LinkIcon,
+  ChevronRight,
+  Sparkles,
+  Zap,
+  MessageSquare,
+  DollarSign,
+  Plus,
+  ArrowLeft,
+  X,
+  FileText,
+  Camera,
+  Download,
+  Calendar
+} from 'lucide-react';
+
+const THEMES = {
+  noir: {
+    id: 'noir',
+    name: 'Noir Signature',
+    bg: 'bg-white',
+    appBg: 'bg-slate-50',
+    text: 'text-slate-950',
+    subtext: 'text-slate-500',
+    accent: 'indigo-600',
+    card: 'bg-white',
+    cardBorder: 'border-slate-100',
+    headerGradient: 'from-black/40 via-transparent to-white',
+    signatureFont: "'Loved by the King', cursive",
+    bodyFont: "'Inter', sans-serif",
+    accentText: 'text-indigo-600',
+    accentBg: 'bg-indigo-600',
+    accentShadow: 'shadow-indigo-100',
+    sigShadow: 'drop-shadow-[0_2px_4px_rgba(255,255,255,0.8)]'
+  },
+  cyber: {
+    id: 'cyber',
+    name: 'Cyber Pulse',
+    bg: 'bg-[#050505]',
+    appBg: 'bg-[#0a0a0a]',
+    text: 'text-white',
+    subtext: 'text-zinc-500',
+    accent: 'lime-400',
+    card: 'bg-zinc-900/40',
+    cardBorder: 'border-zinc-800',
+    headerGradient: 'from-lime-400/20 via-transparent to-[#050505]',
+    signatureFont: "'Rock Salt', cursive",
+    bodyFont: "'JetBrains Mono', monospace",
+    accentText: 'text-lime-400',
+    accentBg: 'bg-lime-400',
+    accentShadow: 'shadow-lime-900/50',
+    sigShadow: 'drop-shadow-[0_0_8px_rgba(163,230,53,0.4)]'
+  },
+  muse: {
+    id: 'muse',
+    name: 'Earthy Muse',
+    bg: 'bg-[#faf7f2]',
+    appBg: 'bg-[#f5f1ea]',
+    text: 'text-[#2d241e]',
+    subtext: 'text-[#7d6d5e]',
+    accent: 'orange-800',
+    card: 'bg-white',
+    cardBorder: 'border-[#e0d6c5]',
+    headerGradient: 'from-[#2d241e]/20 via-transparent to-[#faf7f2]',
+    signatureFont: "'Zeyada', cursive",
+    bodyFont: "'Fraunces', serif",
+    accentText: 'text-orange-900',
+    accentBg: 'bg-orange-900',
+    accentShadow: 'shadow-orange-100',
+    sigShadow: 'drop-shadow-[0_1px_2px_rgba(255,255,255,1)]'
+  },
+  pop: {
+    id: 'pop',
+    name: 'Electric Pop',
+    bg: 'bg-[#fff952]',
+    appBg: 'bg-[#fefce8]',
+    text: 'text-[#0f172a]',
+    subtext: 'text-slate-700',
+    accent: 'blue-600',
+    card: 'bg-white',
+    cardBorder: 'border-slate-950',
+    headerGradient: 'from-blue-600/30 via-transparent to-[#fff952]',
+    signatureFont: "'Gloria Hallelujah', cursive",
+    bodyFont: "'Inter', sans-serif",
+    accentText: 'text-blue-700',
+    accentBg: 'bg-blue-600',
+    accentShadow: 'shadow-blue-200',
+    sigShadow: 'drop-shadow-[0_2px_0_white]'
+  }
+};
+
+const App = () => {
+  const [currentScreen, setCurrentScreen] = useState('kit');
+  const [showPreview, setShowPreview] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState(THEMES.noir);
+  
+  // Influencer Controlled State
+  const [displayName, setDisplayName] = useState("Maya Creative");
+  const [bio, setBio] = useState("Crafting visual narratives for global lifestyle brands through editorial motion.");
+  const [location, setLocation] = useState("Los Angeles / London");
+  const [avatarUrl, setAvatarUrl] = useState("https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&h=1000");
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    const fonts = [
+      'https://fonts.googleapis.com/css2?family=Loved+by+the+King&display=swap',
+      'https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap',
+      'https://fonts.googleapis.com/css2?family=Zeyada&display=swap',
+      'https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap',
+      'https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap',
+      'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,900&display=swap',
+      'https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap'
+    ];
+    fonts.forEach(url => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = url;
+      document.head.appendChild(link);
+    });
+  }, []);
+
+  // Data shared across screens
+  const mockData = {
+    handle: "@mayavisuals",
+    accounts: [
+      { platform: "INSTAGRAM", handle: "maya_visuals", reach: "42.1K", status: "Connected" },
+      { platform: "YOUTUBE", handle: "MayaVlogs", reach: "15.1K", status: "Connected" }
+    ],
+    performance: { 
+      total_followers: "57.2K", 
+      avg_engagement_rate: "4.2%",
+      top_posts: [
+        { id: "p1", thumbnail: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=300&h=400", label: "Editorial" },
+        { id: "p2", thumbnail: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&w=300&h=400", label: "Commercial" }
+      ]
+    },
+    audience: {
+      gender: { female: 0.70 },
+      age: { "18-24": 0.45, "25-34": 0.35, "35-44": 0.20 }
+    }
+  };
+
+  const mockInvoices = [
+    { id: "INV-2026-001", brand: "Nike", campaign: "Summer Run 2026", amount: 2500, status: "PAID", date: "Jan 10", deliverables: ["1x IG Reel", "Story Sequence"] },
+    { id: "INV-2026-002", brand: "Adobe", campaign: "Creative Cloud Remix", amount: 4200, status: "PENDING", date: "Jan 12", deliverables: ["1x YT Integration", "2x IG Stories"] },
+    { id: "INV-2026-003", brand: "L'Oreal", campaign: "Skin Focus", amount: 1800, status: "DRAFT", date: "Jan 13", deliverables: ["1x IG Reel"] }
+  ];
+
+  const handleSave = () => {
+    setIsSaving(true);
+    setTimeout(() => setIsSaving(false), 1200);
+  };
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'kit':
+        return (
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            {/* Profile Media Section */}
+            <section className="space-y-4">
+              <label className={`text-[10px] font-black uppercase tracking-widest ${currentTheme.subtext}`}>Hero Media</label>
+              <div className="relative aspect-[4/5] w-full max-w-[240px] rounded-3xl overflow-hidden group shadow-xl mx-auto md:mx-0">
+                <img src={avatarUrl} alt="Hero" className="w-full h-full object-cover transition-all" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                   <button className="bg-white p-3 rounded-full text-slate-900 shadow-lg active:scale-95 transition-all">
+                      <Camera size={20} />
+                   </button>
+                   <button className="bg-white p-3 rounded-full text-slate-900 shadow-lg active:scale-95 transition-all">
+                      <RefreshCw size={20} />
+                   </button>
+                </div>
+              </div>
+              <p className="text-[10px] font-medium text-slate-400 text-center md:text-left italic">Suggested: High-resolution vertical portrait (800x1000px)</p>
+            </section>
+
+            <section className="space-y-6">
+              <label className={`text-[10px] font-black uppercase tracking-widest ${currentTheme.subtext}`}>Identity & Tone</label>
+              <div className="grid grid-cols-2 gap-3">
+                {Object.values(THEMES).map(t => (
+                  <button
+                    key={t.id}
+                    onClick={() => setCurrentTheme(t)}
+                    className={`relative p-5 rounded-[2rem] border-2 transition-all text-left group ${currentTheme.id === t.id ? 'border-indigo-600 bg-white shadow-xl scale-[1.02]' : 'border-transparent bg-white shadow-sm hover:border-slate-200'}`}
+                  >
+                    <div style={{ fontFamily: t.signatureFont }} className={`text-3xl mb-1 ${t.id === 'cyber' ? 'text-lime-400' : 'text-slate-900'}`}>Signature</div>
+                    <p className={`text-[9px] font-black uppercase tracking-widest ${currentTheme.id === t.id ? 'text-indigo-600' : 'text-slate-400'}`}>{t.name}</p>
+                    {currentTheme.id === t.id && (
+                       <div className="absolute top-4 right-4 text-indigo-600">
+                          <CheckCircle2 size={16} fill="white" />
+                       </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            <section className="space-y-4">
+              <div className="space-y-2">
+                <label className={`text-[10px] font-black uppercase tracking-widest ${currentTheme.subtext}`}>Public Handle</label>
+                <input 
+                  type="text" 
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className={`w-full bg-white border ${currentTheme.cardBorder} px-4 py-4 rounded-2xl font-black text-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all outline-none`}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className={`text-[10px] font-black uppercase tracking-widest ${currentTheme.subtext}`}>Signal Bio</label>
+                <textarea 
+                  rows="3"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  className={`w-full bg-white border ${currentTheme.cardBorder} px-4 py-4 rounded-2xl font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 transition-all outline-none resize-none leading-relaxed`}
+                ></textarea>
+              </div>
+            </section>
+          </div>
+        );
+      case 'invoices':
+        return (
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <div className="flex justify-between items-end">
+              <div>
+                <h3 className={`text-lg font-black tracking-tight ${currentTheme.text}`}>Demand Ledger</h3>
+                <p className={`text-xs font-bold ${currentTheme.subtext}`}>Capturing brand signals & deliverables.</p>
+              </div>
+              <button className={`p-3 rounded-2xl ${currentTheme.accentBg} text-white shadow-xl ${currentTheme.accentShadow}`}>
+                 <Plus size={20} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+               <div className={`${currentTheme.card} p-5 rounded-[2rem] border ${currentTheme.cardBorder} shadow-sm`}>
+                  <p className={`text-[9px] font-black uppercase tracking-widest ${currentTheme.subtext} mb-1`}>Pipeline</p>
+                  <p className={`text-2xl font-black ${currentTheme.text}`}>$8,500</p>
+               </div>
+               <div className={`${currentTheme.card} p-5 rounded-[2rem] border ${currentTheme.cardBorder} shadow-sm`}>
+                  <p className={`text-[9px] font-black uppercase tracking-widest ${currentTheme.subtext} mb-1`}>Settled</p>
+                  <p className={`text-2xl font-black ${currentTheme.text}`}>$24.2k</p>
+               </div>
+            </div>
+
+            <div className="space-y-4">
+              {mockInvoices.map(inv => (
+                <div key={inv.id} className={`${currentTheme.card} p-6 border ${currentTheme.cardBorder} rounded-[2.5rem] shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group`}>
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`text-[10px] font-black tracking-widest uppercase ${currentTheme.subtext}`}>{inv.id}</span>
+                        <div className={`w-1 h-1 rounded-full ${currentTheme.accentBg}`}></div>
+                        <span className={`text-[10px] font-black tracking-widest uppercase ${inv.status === 'PAID' ? 'text-emerald-500' : inv.status === 'PENDING' ? 'text-amber-500' : 'text-slate-400'}`}>
+                          {inv.status}
+                        </span>
+                      </div>
+                      <p className={`text-lg font-black ${currentTheme.text}`}>{inv.brand}</p>
+                    </div>
+                    <div className="text-right">
+                       <p className={`text-lg font-black ${currentTheme.text}`}>${inv.amount.toLocaleString()}</p>
+                       <p className={`text-[10px] font-bold ${currentTheme.subtext}`}>{inv.date}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {inv.deliverables.map(d => (
+                       <span key={d} className={`text-[9px] font-black px-2 py-1 rounded-lg ${currentTheme.id === 'cyber' ? 'bg-white/5 text-zinc-400' : 'bg-slate-50 text-slate-500'}`}>
+                          {d}
+                       </span>
+                    ))}
+                  </div>
+                  <button className="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                     <Download size={18} className={currentTheme.subtext} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'integrations':
+        return (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+             <div className={`${currentTheme.id === 'pop' ? 'bg-blue-600' : 'bg-slate-900'} p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden`}>
+                <Zap size={100} className="absolute -right-8 -bottom-8 opacity-10 rotate-12" />
+                <h4 className="text-xl font-black mb-1 tracking-tight">Identity Graph</h4>
+                <p className="text-white/60 text-xs font-medium mb-6">Autonomous sync of human identity across platforms.</p>
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-white/10 w-fit px-3 py-1.5 rounded-full border border-white/5">
+                   <RefreshCw size={10} className="animate-spin" /> Node Health: 100%
+                </div>
+             </div>
+             <div className="space-y-3">
+               {["Instagram", "YouTube", "TikTok"].map((platform, i) => (
+                 <div key={platform} className={`${currentTheme.card} p-5 border ${currentTheme.cardBorder} rounded-[2rem] flex items-center justify-between`}>
+                   <div className="flex items-center gap-4">
+                     <div className={`w-12 h-12 rounded-2xl ${currentTheme.appBg} flex items-center justify-center`}>
+                        {platform === 'Instagram' ? <Instagram size={20} /> : platform === 'YouTube' ? <Youtube size={20} /> : <TrendingUp size={20} />}
+                     </div>
+                     <div>
+                       <p className={`text-sm font-black ${currentTheme.text}`}>{platform}</p>
+                       <p className={`text-[10px] font-black tracking-widest uppercase ${i < 2 ? 'text-emerald-500' : 'text-slate-300'}`}>
+                          {i < 2 ? 'ACTIVE SYNC' : 'NOT CONNECTED'}
+                       </p>
+                     </div>
+                   </div>
+                   <button className={currentTheme.subtext}><LinkIcon size={18} /></button>
+                 </div>
+               ))}
+             </div>
+          </div>
+        );
+      case 'settings':
+        return (
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+             <div className="space-y-4">
+                <div className={`${currentTheme.card} flex items-center gap-4 p-5 border ${currentTheme.cardBorder} rounded-[2rem]`}>
+                   <img src={avatarUrl} className="w-14 h-14 rounded-2xl object-cover shadow-md" />
+                   <div>
+                      <p className={`text-sm font-black ${currentTheme.text}`}>{displayName}</p>
+                      <p className={`text-xs font-bold ${currentTheme.subtext}`}>maya@signal.os</p>
+                   </div>
+                   <button className={`ml-auto ${currentTheme.accentText} text-[10px] font-black uppercase tracking-widest`}>Admin</button>
+                </div>
+                <div className={`${currentTheme.card} border ${currentTheme.cardBorder} rounded-[2.5rem] overflow-hidden`}>
+                   {['Identity Security', 'Privacy Protocol', 'Revenue Payouts', 'Legal Ledger'].map((item, i) => (
+                     <button key={item} className={`w-full flex items-center justify-between p-5 border-b ${currentTheme.cardBorder} ${currentTheme.text} font-black text-sm last:border-0 hover:bg-slate-50 transition-colors`}>
+                       <span className="tracking-tight">{item}</span>
+                       <ChevronRight size={16} className="opacity-20" />
+                     </button>
+                   ))}
+                </div>
+             </div>
+             <button className="w-full py-6 text-red-500 font-black text-xs uppercase tracking-[0.3em] opacity-50 hover:opacity-100 transition-opacity">Deactivate Node</button>
+          </div>
+        );
+      default: return null;
+    }
+  };
+
+  return (
+    <div className={`min-h-screen ${currentTheme.appBg} flex flex-col font-sans max-w-lg mx-auto border-x ${currentTheme.cardBorder} shadow-2xl overflow-hidden relative transition-colors duration-700`}>
+      
+      {/* --- MOBILE HEADER --- */}
+      <header className={`${currentTheme.bg} px-8 pt-12 pb-8 sticky top-0 z-40 border-b ${currentTheme.cardBorder} transition-all`}>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className={`w-9 h-9 ${currentTheme.accentBg} rounded-xl flex items-center justify-center text-white shadow-xl ${currentTheme.accentShadow}`}>
+              <Zap size={18} fill="white" />
+            </div>
+            <h1 className={`text-2xl font-black tracking-tighter ${currentTheme.text}`}>SIGNAL</h1>
+          </div>
+          <button 
+            onClick={handleSave}
+            className={`px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-lg active:scale-95 ${isSaving ? 'bg-emerald-500 text-white' : `${currentTheme.id === 'pop' ? 'bg-slate-900' : currentTheme.accentBg} text-white`}`}
+          >
+            {isSaving ? "Saved" : "Deploy"}
+          </button>
+        </div>
+      </header>
+
+      {/* --- MAIN EDITOR AREA --- */}
+      <main className="flex-1 p-8 overflow-y-auto pb-40 custom-scrollbar">
+        {renderScreen()}
+      </main>
+
+      {/* --- FLOATING PREVIEW TOGGLE --- */}
+      <button 
+        onClick={() => setShowPreview(true)}
+        className={`${currentTheme.card} border ${currentTheme.cardBorder} p-5 rounded-full shadow-2xl fixed bottom-28 right-8 z-50 hover:scale-110 active:scale-95 transition-all ${currentTheme.accentText}`}
+      >
+        <Eye size={24} />
+      </button>
+
+      {/* --- BOTTOM NAVIGATION --- */}
+      <nav className={`${currentTheme.bg} border-t ${currentTheme.cardBorder} px-8 py-5 fixed bottom-0 w-full max-w-lg z-50 flex justify-between items-center shadow-[0_-10px_30px_-5px_rgba(0,0,0,0.05)] transition-all`}>
+        <NavButton active={currentScreen === 'kit'} onClick={() => setCurrentScreen('kit')} icon={<Layers size={22} />} label="Kit" currentTheme={currentTheme} />
+        <NavButton active={currentScreen === 'invoices'} onClick={() => setCurrentScreen('invoices')} icon={<FileText size={22} />} label="Signal" currentTheme={currentTheme} />
+        <NavButton active={currentScreen === 'integrations'} onClick={() => setCurrentScreen('integrations')} icon={<RefreshCw size={22} />} label="Sync" currentTheme={currentTheme} />
+        <NavButton active={currentScreen === 'settings'} onClick={() => setCurrentScreen('settings')} icon={<Settings size={22} />} label="OS" currentTheme={currentTheme} />
+      </nav>
+
+      {/* --- FULL SCREEN PREVIEW MODAL --- */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-black z-[100] animate-in fade-in duration-500">
+          <div className="absolute top-12 right-8 z-[110]">
+             <button onClick={() => setShowPreview(false)} className="bg-white/10 backdrop-blur-xl p-3 rounded-full text-white border border-white/20">
+                <X size={24} />
+             </button>
+          </div>
+          <div className="h-full overflow-y-auto hide-scrollbar" style={{ fontFamily: currentTheme.bodyFont }}>
+            <div className={`${currentTheme.bg} min-h-screen relative`}>
+              <section className="relative w-full h-[520px] overflow-hidden">
+                <img src={avatarUrl} className={`absolute inset-0 w-full h-full object-cover ${currentTheme.id === 'cyber' ? 'grayscale brightness-50 contrast-125' : currentTheme.id === 'pop' ? 'contrast-125 saturate-[0.8]' : ''}`} />
+                <div className={`absolute inset-0 bg-gradient-to-b ${currentTheme.headerGradient} pointer-events-none transition-all duration-700`}></div>
+                <div className="absolute bottom-16 left-8 z-20">
+                  <h1 className={`text-6xl ${currentTheme.text} mb-3 ${currentTheme.sigShadow}`} style={{ fontFamily: currentTheme.signatureFont }}>{displayName}</h1>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-black ${currentTheme.id === 'cyber' ? 'text-lime-400' : 'text-slate-900'} tracking-tighter lowercase bg-white/60 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 shadow-sm`}>{mockData.handle}</span>
+                    <CheckCircle2 size={16} className={currentTheme.accentText} />
+                  </div>
+                </div>
+              </section>
+              <section className={`px-10 -mt-10 relative z-20 ${currentTheme.text}`}>
+                <div className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.25em] mb-6 ${currentTheme.subtext}`}><MapPin size={12} className={currentTheme.accentText} /> {location}</div>
+                <p className="text-2xl font-light leading-snug mb-12 max-w-[320px]">{bio}</p>
+                <div className={`flex items-center justify-between border-t ${currentTheme.cardBorder} pt-10 pb-16`}>
+                  <div className="space-y-2 text-left">
+                    <p className={`text-[10px] font-black uppercase tracking-widest ${currentTheme.subtext}`}>Reach</p>
+                    <span className="text-4xl font-black tracking-tighter">{mockData.performance.total_followers}</span>
+                  </div>
+                  <div className={`h-12 w-px ${currentTheme.cardBorder}`}></div>
+                  <div className="space-y-2 text-right">
+                    <p className={`text-[10px] font-black uppercase tracking-widest ${currentTheme.subtext}`}>Engagement</p>
+                    <span className="text-4xl font-black tracking-tighter">{mockData.performance.avg_engagement_rate}</span>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .custom-scrollbar::-webkit-scrollbar { width: 0; }
+      `}} />
+    </div>
+  );
+};
+
+const NavButton = ({ active, onClick, icon, label, currentTheme }) => (
+  <button onClick={onClick} className={`flex flex-col items-center gap-1.5 transition-all ${active ? currentTheme.accentText + ' scale-110' : 'text-slate-300'}`}>
+    {icon}
+    <span className="text-[9px] font-black uppercase tracking-[0.2em]">{label}</span>
+  </button>
+);
+
+export default App;
