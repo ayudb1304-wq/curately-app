@@ -1,0 +1,325 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Instagram, 
+  Youtube, 
+  TrendingUp, 
+  Users, 
+  Globe, 
+  FileText, 
+  CheckCircle2, 
+  ChevronRight,
+  Share2,
+  Mail,
+  Award,
+  ArrowUpRight,
+  MapPin,
+  Target
+} from 'lucide-react';
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('kit');
+
+  useEffect(() => {
+    const link1 = document.createElement('link');
+    link1.rel = 'preconnect';
+    link1.href = 'https://fonts.googleapis.com';
+    
+    const link2 = document.createElement('link');
+    link2.rel = 'preconnect';
+    link2.href = 'https://fonts.gstatic.com';
+    link2.crossOrigin = 'anonymous';
+    
+    const link3 = document.createElement('link');
+    link3.rel = 'stylesheet';
+    link3.href = 'https://fonts.googleapis.com/css2?family=Loved+by+the+King&display=swap';
+
+    document.head.appendChild(link1);
+    document.head.appendChild(link2);
+    document.head.appendChild(link3);
+
+    return () => {
+      document.head.removeChild(link1);
+      document.head.removeChild(link2);
+      document.head.removeChild(link3);
+    };
+  }, []);
+
+  const identityGraph = {
+    displayName: "Maya Creative",
+    handle: "@mayavisuals",
+    accounts: [
+      { platform: "INSTAGRAM", handle: "maya_visuals", reach: "42.1K" },
+      { platform: "YOUTUBE", handle: "MayaVlogs", reach: "15.1K" }
+    ]
+  };
+
+  const mediaKit = {
+    profile: { 
+      bio: "Crafting visual narratives for global lifestyle brands.", 
+      avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&h=1000",
+      location: "Los Angeles / London"
+    },
+    performance: {
+      total_followers: "57.2K",
+      avg_engagement_rate: "4.2%",
+      top_posts: [
+        { id: "p1", thumbnail: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=300&h=400", label: "Editorial" },
+        { id: "p2", thumbnail: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&w=300&h=400", label: "Commercial" }
+      ]
+    },
+    audience: {
+      age: { "18-24": 0.45, "25-34": 0.35, "35-44": 0.20 },
+      gender: { female: 0.70, male: 0.28, non_binary: 0.02 },
+      geo: [
+        { city: "Los Angeles", percentage: 12 },
+        { city: "London", percentage: 8 },
+        { city: "New York", percentage: 7 },
+        { city: "Paris", percentage: 5 }
+      ]
+    }
+  };
+
+  const brands = ["Nike", "L'Oreal", "Adobe", "Samsung"];
+
+  return (
+    <div className="min-h-screen bg-[#FDFDFD] flex justify-center items-start sm:py-12 px-4">
+      <div className="w-full max-w-[390px] bg-white min-h-[844px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] rounded-[55px] overflow-hidden relative border-[10px] border-slate-950">
+        
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-7 bg-slate-950 rounded-b-3xl z-50"></div>
+
+        <div className="h-full overflow-y-auto hide-scrollbar pb-36 bg-white">
+          
+          <section className="relative w-full h-[480px] overflow-hidden">
+            <img 
+              src={mediaKit.profile.avatarUrl} 
+              className="absolute inset-0 w-full h-full object-cover contrast-[1.05]"
+              alt="Maya Creative"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-white pointer-events-none"></div>
+
+            <div className="absolute bottom-16 left-8 z-20">
+              <h1 
+                className="text-6xl text-slate-950 mb-1"
+                style={{ fontFamily: "'Loved by the King', cursive" }}
+              >
+                {identityGraph.displayName}
+              </h1>
+              <div className="flex items-center gap-2">
+                 <span className="text-xs font-black text-slate-950 tracking-tighter lowercase bg-white/30 backdrop-blur-md px-2 py-0.5 rounded border border-white/20">
+                  {identityGraph.handle}
+                </span>
+                <CheckCircle2 size={14} className="text-indigo-600 fill-white" />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center px-8 pt-12 absolute top-0 w-full z-30">
+              <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-white drop-shadow-md">Verified Signal</span>
+              <button className="p-2 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full text-white">
+                <Share2 size={18} />
+              </button>
+            </div>
+          </section>
+
+          <section className="px-8 -mt-8 relative z-20">
+            <div className="flex items-center gap-1 text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-4">
+               <MapPin size={10} className="text-indigo-500" /> {mediaKit.profile.location}
+            </div>
+            
+            <p className="text-lg font-light text-slate-700 leading-snug mb-10 max-w-[300px]">
+              {mediaKit.profile.bio}
+            </p>
+
+            <div className="flex items-center justify-between border-t border-slate-100 pt-8 pb-10">
+              <div className="space-y-1">
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Network</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-slate-950 tracking-tighter">{mediaKit.performance.total_followers}</span>
+                  <ArrowUpRight size={14} className="text-emerald-500" />
+                </div>
+              </div>
+              <div className="h-8 w-px bg-slate-100"></div>
+              <div className="space-y-1 text-right">
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Engagement</p>
+                <span className="text-3xl font-black text-slate-950 tracking-tighter">{mediaKit.performance.avg_engagement_rate}</span>
+              </div>
+            </div>
+          </section>
+
+          <div className="px-8 mb-10">
+            <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Active Sync Nodes</h3>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar py-2">
+              {identityGraph.accounts.map(acc => (
+                <div key={acc.platform} className="flex-shrink-0 flex items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-2xl min-w-[140px] hover:bg-white hover:shadow-lg transition-all">
+                  <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm text-slate-800">
+                    {acc.platform === 'INSTAGRAM' ? <Instagram size={16} /> : <Youtube size={16} />}
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-900 leading-none mb-1">@{acc.handle}</p>
+                    <p className="text-[8px] text-slate-400 font-bold tracking-wider">{acc.reach}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="px-8 flex gap-10 mb-8 sticky top-[70px] bg-white/80 backdrop-blur-md py-3 z-30">
+            {['kit', 'history'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`text-[9px] font-bold uppercase tracking-[0.3em] pb-1 transition-all relative ${
+                  activeTab === tab ? 'text-slate-950' : 'text-slate-300'
+                }`}
+              >
+                {tab === 'kit' ? 'Intelligence' : 'Portfolio'}
+                {activeTab === tab && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-slate-950 rounded-full animate-in zoom-in"></div>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div className="px-8">
+            {activeTab === 'kit' ? (
+              <div className="space-y-10 animate-in fade-in duration-700">
+                
+                {/* Visual Graph: Gender Split */}
+                <div className="bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 relative overflow-hidden">
+                  <div className="flex items-center gap-2 mb-8">
+                    <Target size={14} className="text-indigo-500" />
+                    <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-400">Gender Distribution</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-8">
+                    {/* Ring Chart SVG */}
+                    <div className="relative w-24 h-24">
+                      <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                        <circle cx="18" cy="18" r="16" fill="none" className="stroke-slate-200" strokeWidth="3" />
+                        <circle 
+                          cx="18" cy="18" r="16" fill="none" 
+                          className="stroke-indigo-600 transition-all duration-1000" 
+                          strokeWidth="3" 
+                          strokeDasharray={`${mediaKit.audience.gender.female * 100}, 100`}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-xs font-black text-slate-900">70%</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Female</span>
+                        <span className="text-[10px] font-black">70%</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Male</span>
+                        <span className="text-[10px] font-black">28%</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Other</span>
+                        <span className="text-[10px] font-black">2%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visual Graph: Age Tiers */}
+                <div className="bg-slate-950 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl">
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-8 text-slate-400">
+                      <TrendingUp size={14} className="text-indigo-400" />
+                      <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Age Segments</span>
+                    </div>
+                    
+                    <div className="space-y-6">
+                      {Object.entries(mediaKit.audience.age).map(([range, val]) => (
+                        <div key={range}>
+                          <div className="flex justify-between text-[9px] font-bold uppercase mb-2 tracking-widest">
+                            <span className="text-slate-400">{range} YRS</span>
+                            <span className="text-white">{(val * 100).toFixed(0)}%</span>
+                          </div>
+                          <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-indigo-500 transition-all duration-1000" 
+                              style={{ width: `${val * 100}%` }} 
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visual Graph: Geo Locations */}
+                <div className="bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100">
+                  <div className="flex items-center gap-2 mb-8">
+                    <Globe size={14} className="text-indigo-500" />
+                    <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-400">Market Presence</span>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {mediaKit.audience.geo.map(item => (
+                      <div key={item.city} className="group">
+                        <div className="flex justify-between items-baseline mb-2">
+                          <span className="text-xs font-black text-slate-900 tracking-tight">{item.city}</span>
+                          <span className="text-[10px] font-mono text-slate-400">{item.percentage}%</span>
+                        </div>
+                        <div className="h-[2px] bg-slate-200 w-full overflow-hidden rounded-full">
+                          <div 
+                            className="h-full bg-slate-900 group-hover:bg-indigo-600 transition-all duration-700" 
+                            style={{ width: `${item.percentage * 5}%` }} 
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            ) : (
+              <div className="space-y-12 animate-in fade-in duration-700">
+                <div className="grid grid-cols-2 gap-4">
+                  {mediaKit.performance.top_posts.map(post => (
+                    <div key={post.id} className="relative aspect-[3/4] rounded-[2.5rem] overflow-hidden group shadow-md border border-slate-100">
+                      <img src={post.thumbnail} className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" alt="Work" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-5">
+                        <p className="text-white text-[9px] font-black uppercase tracking-[0.2em]">{post.label}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pb-4">
+                  {brands.map(brand => (
+                    <div key={brand} className="py-8 px-4 bg-slate-50 border border-slate-100 rounded-[2rem] flex items-center justify-center text-center">
+                      <p className="text-[9px] font-black text-slate-800 tracking-[0.2em] uppercase">{brand}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="absolute bottom-10 left-0 right-0 px-8 z-50">
+          <button className="w-full bg-slate-950 hover:bg-indigo-600 text-white font-black py-6 rounded-[2rem] flex items-center justify-center gap-3 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)] active:scale-[0.97] transition-all group overflow-hidden relative">
+            <Mail size={18} className="relative z-10" />
+            <span className="uppercase tracking-[0.2em] text-[10px] relative z-10">Initiate Partnership</span>
+          </button>
+        </div>
+
+      </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}} />
+    </div>
+  );
+};
+
+export default App;
