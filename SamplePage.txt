@@ -5,43 +5,100 @@ import {
   TrendingUp, 
   Users, 
   Globe, 
-  FileText, 
   CheckCircle2, 
-  ChevronRight,
-  Share2,
-  Mail,
-  Award,
-  ArrowUpRight,
-  MapPin,
-  Target
+  Share2, 
+  Mail, 
+  Award, 
+  ArrowUpRight, 
+  MapPin, 
+  Target,
+  Palette,
+  Layers
 } from 'lucide-react';
+
+const THEMES = {
+  noir: {
+    id: 'noir',
+    name: 'Noir Signature',
+    bg: 'bg-white',
+    text: 'text-slate-950',
+    accent: 'indigo-600',
+    card: 'bg-slate-50',
+    cardBorder: 'border-slate-100',
+    headerGradient: 'from-black/20 via-transparent to-white',
+    signatureFont: "'Loved by the King', cursive",
+    bodyFont: "'Inter', sans-serif",
+    accentText: 'text-indigo-600',
+    accentBg: 'bg-indigo-600',
+    accentShadow: 'shadow-indigo-100'
+  },
+  cyber: {
+    id: 'cyber',
+    name: 'Cyber Pulse',
+    bg: 'bg-[#0a0a0a]',
+    text: 'text-white',
+    accent: 'lime-400',
+    card: 'bg-zinc-900',
+    cardBorder: 'border-zinc-800',
+    headerGradient: 'from-lime-400/10 via-transparent to-[#0a0a0a]',
+    signatureFont: "'Rock Salt', cursive",
+    bodyFont: "'JetBrains Mono', monospace",
+    accentText: 'text-lime-400',
+    accentBg: 'bg-lime-400',
+    accentShadow: 'shadow-lime-900/50'
+  },
+  muse: {
+    id: 'muse',
+    name: 'Earthy Muse',
+    bg: 'bg-[#fcfaf7]',
+    text: 'text-[#4a3f35]',
+    accent: 'orange-700',
+    card: 'bg-[#f5f0e8]',
+    cardBorder: 'border-[#e8dfd0]',
+    headerGradient: 'from-[#4a3f35]/10 via-transparent to-[#fcfaf7]',
+    signatureFont: "'Zeyada', cursive",
+    bodyFont: "'Fraunces', serif",
+    accentText: 'text-orange-800',
+    accentBg: 'bg-orange-800',
+    accentShadow: 'shadow-orange-100'
+  },
+  pop: {
+    id: 'pop',
+    name: 'Electric Pop',
+    bg: 'bg-[#fff952]',
+    text: 'text-slate-900',
+    accent: 'blue-600',
+    card: 'bg-white',
+    cardBorder: 'border-slate-900',
+    headerGradient: 'from-blue-600/20 via-transparent to-[#fff952]',
+    signatureFont: "'Gloria Hallelujah', cursive",
+    bodyFont: "'Bangers', cursive",
+    accentText: 'text-blue-600',
+    accentBg: 'bg-blue-600',
+    accentShadow: 'shadow-blue-200'
+  }
+};
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('kit');
+  const [currentTheme, setCurrentTheme] = useState(THEMES.noir);
 
   useEffect(() => {
-    const link1 = document.createElement('link');
-    link1.rel = 'preconnect';
-    link1.href = 'https://fonts.googleapis.com';
-    
-    const link2 = document.createElement('link');
-    link2.rel = 'preconnect';
-    link2.href = 'https://fonts.gstatic.com';
-    link2.crossOrigin = 'anonymous';
-    
-    const link3 = document.createElement('link');
-    link3.rel = 'stylesheet';
-    link3.href = 'https://fonts.googleapis.com/css2?family=Loved+by+the+King&display=swap';
-
-    document.head.appendChild(link1);
-    document.head.appendChild(link2);
-    document.head.appendChild(link3);
-
-    return () => {
-      document.head.removeChild(link1);
-      document.head.removeChild(link2);
-      document.head.removeChild(link3);
-    };
+    const fonts = [
+      'https://fonts.googleapis.com/css2?family=Loved+by+the+King&display=swap',
+      'https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap',
+      'https://fonts.googleapis.com/css2?family=Zeyada&display=swap',
+      'https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap',
+      'https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap',
+      'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,900&display=swap',
+      'https://fonts.googleapis.com/css2?family=Bangers&display=swap'
+    ];
+    fonts.forEach(url => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = url;
+      document.head.appendChild(link);
+    });
   }, []);
 
   const identityGraph = {
@@ -55,7 +112,7 @@ const App = () => {
 
   const mediaKit = {
     profile: { 
-      bio: "Crafting visual narratives for global lifestyle brands.", 
+      bio: "Crafting visual narratives for global lifestyle brands through editorial motion and digital storytelling.", 
       avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&h=1000",
       location: "Los Angeles / London"
     },
@@ -73,8 +130,7 @@ const App = () => {
       geo: [
         { city: "Los Angeles", percentage: 12 },
         { city: "London", percentage: 8 },
-        { city: "New York", percentage: 7 },
-        { city: "Paris", percentage: 5 }
+        { city: "New York", percentage: 7 }
       ]
     }
   };
@@ -82,98 +138,120 @@ const App = () => {
   const brands = ["Nike", "L'Oreal", "Adobe", "Samsung"];
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] flex justify-center items-start sm:py-12 px-4">
-      <div className="w-full max-w-[390px] bg-white min-h-[844px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] rounded-[55px] overflow-hidden relative border-[10px] border-slate-950">
+    <div className={`min-h-screen ${currentTheme.bg} flex justify-center items-start sm:py-12 px-4 transition-colors duration-500`}>
+      
+      {/* Floating Theme Switcher */}
+      <div className="fixed top-6 right-6 z-[100] bg-white/10 backdrop-blur-2xl p-2 rounded-full border border-white/20 shadow-2xl flex flex-col gap-2">
+        {Object.values(THEMES).map(t => (
+          <button
+            key={t.id}
+            onClick={() => setCurrentTheme(t)}
+            className={`w-10 h-10 rounded-full border-2 transition-all ${currentTheme.id === t.id ? 'border-indigo-500 scale-110' : 'border-transparent'}`}
+            style={{ backgroundColor: t.id === 'cyber' ? '#111' : t.id === 'pop' ? '#fff952' : t.id === 'muse' ? '#f5f0e8' : '#fff' }}
+            title={t.name}
+          >
+            <Palette size={14} className={t.id === 'cyber' ? 'text-lime-400 mx-auto' : 'text-slate-400 mx-auto'} />
+          </button>
+        ))}
+      </div>
+
+      {/* Phone Frame */}
+      <div className={`w-full max-w-[390px] ${currentTheme.bg} min-h-[844px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] rounded-[55px] overflow-hidden relative border-[10px] border-slate-950 transition-colors duration-500`}>
         
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-7 bg-slate-950 rounded-b-3xl z-50"></div>
 
-        <div className="h-full overflow-y-auto hide-scrollbar pb-36 bg-white">
+        <div className="h-full overflow-y-auto hide-scrollbar pb-36" style={{ fontFamily: currentTheme.bodyFont }}>
           
-          <section className="relative w-full h-[480px] overflow-hidden">
+          <section className="relative w-full h-[460px] overflow-hidden">
             <img 
               src={mediaKit.profile.avatarUrl} 
-              className="absolute inset-0 w-full h-full object-cover contrast-[1.05]"
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${currentTheme.id === 'cyber' ? 'grayscale brightness-50' : currentTheme.id === 'pop' ? 'contrast-125' : ''}`}
               alt="Maya Creative"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-white pointer-events-none"></div>
+            <div className={`absolute inset-0 bg-gradient-to-b ${currentTheme.headerGradient} pointer-events-none transition-all duration-700`}></div>
 
-            <div className="absolute bottom-16 left-8 z-20">
+            <div className="absolute bottom-12 left-8 z-20">
               <h1 
-                className="text-6xl text-slate-950 mb-1"
-                style={{ fontFamily: "'Loved by the King', cursive" }}
+                className={`text-6xl ${currentTheme.text} mb-1 transition-all duration-500`}
+                style={{ fontFamily: currentTheme.signatureFont }}
               >
                 {identityGraph.displayName}
               </h1>
               <div className="flex items-center gap-2">
-                 <span className="text-xs font-black text-slate-950 tracking-tighter lowercase bg-white/30 backdrop-blur-md px-2 py-0.5 rounded border border-white/20">
+                 <span className={`text-xs font-black ${currentTheme.text} tracking-tighter lowercase bg-white/20 backdrop-blur-md px-2 py-0.5 rounded border border-white/10`}>
                   {identityGraph.handle}
                 </span>
-                <CheckCircle2 size={14} className="text-indigo-600 fill-white" />
+                <CheckCircle2 size={14} className={currentTheme.accentText} />
               </div>
             </div>
 
             <div className="flex justify-between items-center px-8 pt-12 absolute top-0 w-full z-30">
-              <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-white drop-shadow-md">Verified Signal</span>
+              <div className="flex items-center gap-2">
+                <Layers size={14} className={currentTheme.accentText} />
+                <span className={`text-[9px] font-bold tracking-[0.3em] uppercase ${currentTheme.id === 'noir' ? 'text-white' : currentTheme.text} drop-shadow-md`}>
+                  {currentTheme.name}
+                </span>
+              </div>
               <button className="p-2 bg-white/10 backdrop-blur-xl border border-white/10 rounded-full text-white">
                 <Share2 size={18} />
               </button>
             </div>
           </section>
 
-          <section className="px-8 -mt-8 relative z-20">
-            <div className="flex items-center gap-1 text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em] mb-4">
-               <MapPin size={10} className="text-indigo-500" /> {mediaKit.profile.location}
+          <section className={`px-8 -mt-6 relative z-20 ${currentTheme.text}`}>
+            <div className={`flex items-center gap-1 text-[9px] ${currentTheme.id === 'cyber' ? 'text-zinc-500' : 'text-slate-400'} font-bold uppercase tracking-[0.2em] mb-4`}>
+               <MapPin size={10} className={currentTheme.accentText} /> {mediaKit.profile.location}
             </div>
             
-            <p className="text-lg font-light text-slate-700 leading-snug mb-10 max-w-[300px]">
+            <p className="text-xl font-light leading-snug mb-10 max-w-[300px]">
               {mediaKit.profile.bio}
             </p>
 
-            <div className="flex items-center justify-between border-t border-slate-100 pt-8 pb-10">
+            <div className={`flex items-center justify-between border-t ${currentTheme.cardBorder} pt-8 pb-10`}>
               <div className="space-y-1">
-                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Network</p>
+                <p className="text-[9px] font-bold opacity-50 uppercase tracking-widest">Network</p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-slate-950 tracking-tighter">{mediaKit.performance.total_followers}</span>
+                  <span className="text-3xl font-black tracking-tighter">{mediaKit.performance.total_followers}</span>
                   <ArrowUpRight size={14} className="text-emerald-500" />
                 </div>
               </div>
-              <div className="h-8 w-px bg-slate-100"></div>
+              <div className={`h-8 w-px ${currentTheme.cardBorder}`}></div>
               <div className="space-y-1 text-right">
-                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Engagement</p>
-                <span className="text-3xl font-black text-slate-950 tracking-tighter">{mediaKit.performance.avg_engagement_rate}</span>
+                <p className="text-[9px] font-bold opacity-50 uppercase tracking-widest">Engagement</p>
+                <span className="text-3xl font-black tracking-tighter">{mediaKit.performance.avg_engagement_rate}</span>
               </div>
             </div>
           </section>
 
           <div className="px-8 mb-10">
-            <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">Active Sync Nodes</h3>
+            <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 mb-4">Active Sync Nodes</h3>
             <div className="flex gap-3 overflow-x-auto no-scrollbar py-2">
               {identityGraph.accounts.map(acc => (
-                <div key={acc.platform} className="flex-shrink-0 flex items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-2xl min-w-[140px] hover:bg-white hover:shadow-lg transition-all">
-                  <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm text-slate-800">
+                <div key={acc.platform} className={`flex-shrink-0 flex items-center gap-3 p-3 ${currentTheme.card} border ${currentTheme.cardBorder} rounded-2xl min-w-[140px] shadow-sm`}>
+                  <div className={`w-8 h-8 rounded-lg ${currentTheme.bg === 'bg-white' ? 'bg-slate-100' : 'bg-black/20'} flex items-center justify-center`}>
                     {acc.platform === 'INSTAGRAM' ? <Instagram size={16} /> : <Youtube size={16} />}
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-slate-900 leading-none mb-1">@{acc.handle}</p>
-                    <p className="text-[8px] text-slate-400 font-bold tracking-wider">{acc.reach}</p>
+                    <p className={`text-[10px] font-black ${currentTheme.text} leading-none mb-1`}>@{acc.handle}</p>
+                    <p className="text-[8px] opacity-50 font-bold tracking-wider">{acc.reach}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="px-8 flex gap-10 mb-8 sticky top-[70px] bg-white/80 backdrop-blur-md py-3 z-30">
+          <div className={`px-8 flex gap-10 mb-8 sticky top-[70px] ${currentTheme.bg}/80 backdrop-blur-md py-3 z-30 transition-all`}>
             {['kit', 'history'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`text-[9px] font-bold uppercase tracking-[0.3em] pb-1 transition-all relative ${
-                  activeTab === tab ? 'text-slate-950' : 'text-slate-300'
+                  activeTab === tab ? currentTheme.text : 'opacity-30'
                 }`}
               >
                 {tab === 'kit' ? 'Intelligence' : 'Portfolio'}
                 {activeTab === tab && (
-                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-slate-950 rounded-full animate-in zoom-in"></div>
+                  <div className={`absolute bottom-0 left-0 w-full h-0.5 ${currentTheme.accentBg} rounded-full`}></div>
                 )}
               </button>
             ))}
@@ -184,52 +262,47 @@ const App = () => {
               <div className="space-y-10 animate-in fade-in duration-700">
                 
                 {/* Visual Graph: Gender Split */}
-                <div className="bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 relative overflow-hidden">
-                  <div className="flex items-center gap-2 mb-8">
-                    <Target size={14} className="text-indigo-500" />
-                    <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-400">Gender Distribution</span>
+                <div className={`${currentTheme.card} rounded-[2.5rem] p-8 border ${currentTheme.cardBorder} relative overflow-hidden`}>
+                  <div className="flex items-center gap-2 mb-8 opacity-60">
+                    <Target size={14} />
+                    <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Market Composition</span>
                   </div>
                   
                   <div className="flex items-center gap-8">
-                    {/* Ring Chart SVG */}
                     <div className="relative w-24 h-24">
                       <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                        <circle cx="18" cy="18" r="16" fill="none" className="stroke-slate-200" strokeWidth="3" />
+                        <circle cx="18" cy="18" r="16" fill="none" className="stroke-black/5" strokeWidth="4" />
                         <circle 
                           cx="18" cy="18" r="16" fill="none" 
-                          className="stroke-indigo-600 transition-all duration-1000" 
-                          strokeWidth="3" 
+                          className={`transition-all duration-1000 ${currentTheme.id === 'cyber' ? 'stroke-lime-400' : currentTheme.id === 'pop' ? 'stroke-blue-600' : 'stroke-indigo-600'}`} 
+                          strokeWidth="4" 
                           strokeDasharray={`${mediaKit.audience.gender.female * 100}, 100`}
                           strokeLinecap="round"
                         />
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-xs font-black text-slate-900">70%</span>
+                        <span className={`text-xs font-black ${currentTheme.text}`}>70%</span>
                       </div>
                     </div>
                     
                     <div className="flex-1 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Female</span>
+                        <span className={`text-[10px] font-bold ${currentTheme.accentText} uppercase tracking-widest`}>Female</span>
                         <span className="text-[10px] font-black">70%</span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Male</span>
+                      <div className="flex items-center justify-between opacity-50">
+                        <span className="text-[10px] font-bold uppercase tracking-widest">Male</span>
                         <span className="text-[10px] font-black">28%</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Other</span>
-                        <span className="text-[10px] font-black">2%</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Visual Graph: Age Tiers */}
-                <div className="bg-slate-950 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl">
+                <div className={`${currentTheme.id === 'cyber' ? 'bg-lime-400 text-black' : currentTheme.id === 'pop' ? 'bg-blue-600 text-white' : 'bg-slate-950 text-white'} rounded-[2.5rem] p-8 relative overflow-hidden shadow-2xl transition-colors duration-500`}>
                   <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-8 text-slate-400">
-                      <TrendingUp size={14} className="text-indigo-400" />
+                    <div className="flex items-center gap-2 mb-8 opacity-60">
+                      <TrendingUp size={14} />
                       <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Age Segments</span>
                     </div>
                     
@@ -237,12 +310,12 @@ const App = () => {
                       {Object.entries(mediaKit.audience.age).map(([range, val]) => (
                         <div key={range}>
                           <div className="flex justify-between text-[9px] font-bold uppercase mb-2 tracking-widest">
-                            <span className="text-slate-400">{range} YRS</span>
-                            <span className="text-white">{(val * 100).toFixed(0)}%</span>
+                            <span className="opacity-60">{range} YRS</span>
+                            <span className="font-black">{(val * 100).toFixed(0)}%</span>
                           </div>
-                          <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                          <div className={`h-1 ${currentTheme.id === 'cyber' ? 'bg-black/10' : 'bg-white/10'} rounded-full overflow-hidden`}>
                             <div 
-                              className="h-full bg-indigo-500 transition-all duration-1000" 
+                              className={`h-full ${currentTheme.id === 'cyber' ? 'bg-black' : currentTheme.id === 'pop' ? 'bg-white' : 'bg-indigo-500'} transition-all duration-1000`} 
                               style={{ width: `${val * 100}%` }} 
                             />
                           </div>
@@ -253,22 +326,22 @@ const App = () => {
                 </div>
 
                 {/* Visual Graph: Geo Locations */}
-                <div className="bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100">
-                  <div className="flex items-center gap-2 mb-8">
-                    <Globe size={14} className="text-indigo-500" />
-                    <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-400">Market Presence</span>
+                <div className={`${currentTheme.card} rounded-[2.5rem] p-8 border ${currentTheme.cardBorder}`}>
+                  <div className="flex items-center gap-2 mb-8 opacity-60">
+                    <Globe size={14} />
+                    <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Geography</span>
                   </div>
                   
                   <div className="space-y-4">
                     {mediaKit.audience.geo.map(item => (
                       <div key={item.city} className="group">
                         <div className="flex justify-between items-baseline mb-2">
-                          <span className="text-xs font-black text-slate-900 tracking-tight">{item.city}</span>
-                          <span className="text-[10px] font-mono text-slate-400">{item.percentage}%</span>
+                          <span className="text-xs font-black tracking-tight">{item.city}</span>
+                          <span className="text-[10px] opacity-40 font-mono">{item.percentage}%</span>
                         </div>
-                        <div className="h-[2px] bg-slate-200 w-full overflow-hidden rounded-full">
+                        <div className={`h-[2px] ${currentTheme.id === 'cyber' ? 'bg-zinc-800' : 'bg-slate-200'} w-full overflow-hidden rounded-full`}>
                           <div 
-                            className="h-full bg-slate-900 group-hover:bg-indigo-600 transition-all duration-700" 
+                            className={`h-full ${currentTheme.id === 'cyber' ? 'bg-lime-400' : currentTheme.id === 'noir' ? 'bg-slate-900' : currentTheme.id === 'muse' ? 'bg-orange-800' : 'bg-blue-600'} transition-all duration-700`} 
                             style={{ width: `${item.percentage * 5}%` }} 
                           />
                         </div>
@@ -282,8 +355,8 @@ const App = () => {
               <div className="space-y-12 animate-in fade-in duration-700">
                 <div className="grid grid-cols-2 gap-4">
                   {mediaKit.performance.top_posts.map(post => (
-                    <div key={post.id} className="relative aspect-[3/4] rounded-[2.5rem] overflow-hidden group shadow-md border border-slate-100">
-                      <img src={post.thumbnail} className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105" alt="Work" />
+                    <div key={post.id} className={`relative aspect-[3/4] rounded-[2.5rem] overflow-hidden group shadow-md border ${currentTheme.cardBorder}`}>
+                      <img src={post.thumbnail} className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${currentTheme.id === 'cyber' ? 'grayscale' : ''}`} alt="Work" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-5">
                         <p className="text-white text-[9px] font-black uppercase tracking-[0.2em]">{post.label}</p>
                       </div>
@@ -293,8 +366,8 @@ const App = () => {
 
                 <div className="grid grid-cols-2 gap-3 pb-4">
                   {brands.map(brand => (
-                    <div key={brand} className="py-8 px-4 bg-slate-50 border border-slate-100 rounded-[2rem] flex items-center justify-center text-center">
-                      <p className="text-[9px] font-black text-slate-800 tracking-[0.2em] uppercase">{brand}</p>
+                    <div key={brand} className={`${currentTheme.card} py-8 px-4 border ${currentTheme.cardBorder} rounded-[2rem] flex items-center justify-center text-center`}>
+                      <p className="text-[9px] font-black opacity-80 tracking-[0.2em] uppercase">{brand}</p>
                     </div>
                   ))}
                 </div>
@@ -304,9 +377,9 @@ const App = () => {
         </div>
 
         <div className="absolute bottom-10 left-0 right-0 px-8 z-50">
-          <button className="w-full bg-slate-950 hover:bg-indigo-600 text-white font-black py-6 rounded-[2rem] flex items-center justify-center gap-3 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.4)] active:scale-[0.97] transition-all group overflow-hidden relative">
+          <button className={`w-full ${currentTheme.id === 'noir' ? 'bg-slate-950 text-white' : currentTheme.id === 'cyber' ? 'bg-lime-400 text-black' : currentTheme.id === 'muse' ? 'bg-orange-800 text-white' : 'bg-blue-600 text-white'} font-black py-6 rounded-[2rem] flex items-center justify-center gap-3 ${currentTheme.accentShadow} active:scale-[0.97] transition-all group overflow-hidden relative shadow-2xl`}>
             <Mail size={18} className="relative z-10" />
-            <span className="uppercase tracking-[0.2em] text-[10px] relative z-10">Initiate Partnership</span>
+            <span className="uppercase tracking-[0.2em] text-[10px] relative z-10">Request Media Partnership</span>
           </button>
         </div>
 
