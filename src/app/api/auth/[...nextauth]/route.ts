@@ -5,5 +5,7 @@
  * Handles: signin, signout, callback, session, csrf, providers
  */
 
-export { handlers as GET, handlers as POST } from "@/auth";
+import { handlers } from "@/auth";
+
+export const { GET, POST } = handlers;
 
