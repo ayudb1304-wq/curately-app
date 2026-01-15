@@ -1,0 +1,135 @@
+// Prisma Schema for Curately Creator OS - Phase 1 Data Moat Foundation
+// Architecture: Identity Graph with secure OAuth token storage
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum PlatformType {
+  IG
+  TIKTOK
+  YOUTUBE
+}
+
+// ============================================================================
+// AUTH.JS REQUIRED MODELS
+// ============================================================================
+
+model User {
+  id            String    @id @default(cuid())
+  internal_uid  String    @unique @default(uuid()) @db.Uuid
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts          Account[]
+  sessions          Session[]
+  audienceSnapshots AudienceSnapshot[]
+
+  @@map("users")
+}
+
+model Account {
+  id                       String       @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?      @db.Text
+  access_token             String?      @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?      @db.Text
+  session_state            String?
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
+
+  // Extended fields for Identity Graph
+  platform_type            PlatformType?
+  is_verified              Boolean      @default(false)
+  encrypted_refresh_token  String?      @db.Text
+  platform_username        String?
+  platform_user_id         String?
+  followers_count          Int?
+  following_count          Int?
+  media_count              Int?
+  last_synced_at           DateTime?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@index([platform_type])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ============================================================================
+// AUDIENCE GRAPH - Time-Series Demographic Tracking
+// ============================================================================
+
+model AudienceSnapshot {
+  id               String       @id @default(cuid())
+  userId           String
+  platform_type    PlatformType
+  snapshot_date    DateTime     @default(now())
+  
+  // JSONB fields for flexible demographic storage
+  // Aligned with official Social Graph API response structures
+  age_demographics Json?        @db.JsonB // { "18-24": 0.25, "25-34": 0.40, ... }
+  geo_distribution Json?        @db.JsonB // { "US": 0.45, "UK": 0.12, ... }
+  gender_split     Json?        @db.JsonB // { "male": 0.55, "female": 0.42, "other": 0.03 }
+  
+  // Additional metrics from official APIs
+  reach_metrics    Json?        @db.JsonB
+  engagement_rate  Float?
+  total_followers  Int?
+  
+  createdAt        DateTime     @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, platform_type])
+  @@index([snapshot_date])
+  @@index([userId, snapshot_date])
+  @@map("audience_snapshots")
+}
+

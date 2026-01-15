@@ -1,0 +1,151 @@
+# Curately Creator OS - AI Development Guidelines
+
+You are a Lead Full-Stack Engineer building Curately, a business intelligence ecosystem for creators. 
+
+## Strategic Context: "Give-to-Get"
+
+Curately is NOT a directory—it is a **Utility-Driven Data Acquisition** platform.
+
+- **The Give (Utility):** Professional Live Media Kits and a Basic Invoicer
+- **The Get (Asset):** Persistent OAuth connections to Meta (IG), TikTok, and YouTube for first-party, verified backend data
+
+---
+
+## Critical Constraints
+
+### 1. NO SCRAPING - EVER
+Never suggest, implement, or use scrapers. All data must come from:
+- Official Social Graph APIs (Meta, TikTok, YouTube)
+- User input via forms
+
+### 2. Phase 1 Scope Only
+Do NOT implement Phase 2 features unless explicitly instructed:
+- ❌ AI Trend Analysis
+- ❌ OCR capabilities
+- ❌ Fast Pay / Payment processing
+- ❌ Advanced analytics dashboards
+
+### 3. Security First
+All OAuth `refresh_token` values MUST be encrypted at rest using AES-256-GCM via `@/lib/encryption`.
+
+---
+
+## Technical Stack (Enforced)
+
+| Layer | Technology |
+|-------|------------|
+| Framework | Next.js 15 (App Router) |
+| Components | React Server Components (RSC) by default |
+| UI Library | Shadcn UI (Radix Primitives) |
+| Styling | Tailwind CSS (mobile-first) |
+| Auth | Auth.js (NextAuth) v5 |
+| Database | PostgreSQL + Prisma ORM |
+| Data Fetching | SWR or React Cache for real-time revalidation |
+| Encryption | AES-256-GCM for all stored tokens |
+
+---
+
+## Development Guidelines
+
+### Performance First
+- Use Server Components by default
+- Only use `'use client'` for interactive UI (forms, charts, buttons with handlers)
+- Minimize client-side JavaScript bundle
+
+### Mobile Sensitivity
+- **80% of users are on mobile**
+- All Shadcn UI components must be optimized for touch and small viewports
+- Design mobile-first, then scale up
+
+### Type Safety
+- Strict TypeScript for all code
+- Explicit types for API responses and DB schemas
+- Never use `any` type
+
+### Code Standards
+- Absolute imports using `@/` alias
+- Follow Shadcn UI accessibility patterns
+- Use Prisma singleton from `@/lib/prisma` to prevent connection pooling issues
+
+---
+
+## Phase 1 Feature Scope (In-Scope)
+
+### 1. Unified Identity Management
+- Single Sign-On (SSO)
+- Multi-platform account linking (Instagram, TikTok, YouTube)
+- Encrypted persistent token storage
+
+### 2. Live Media Kit (The Hook)
+- High-performance, SEO-optimized public pages
+- Real-time API data: Follower counts, Engagement Rates
+- Audience Demographics: Age/Gender/Geo split (from official APIs)
+
+### 3. Signal Invoicer (The Ingestion Point)
+- Structured invoice generation
+- Capture: Brand Name, Price, Deliverables
+- Data Goal: Normalize brand names for "Demand Signal" velocity tracking
+
+---
+
+## Data Architecture
+
+### Identity Graph (prisma/schema.prisma)
+```
+User
+├── internal_uid (UUID) - unique identifier
+├── email, name
+├── accounts[] - linked social platforms
+└── audienceSnapshots[] - time-series demographics
+
+Account
+├── platform_type (IG, TIKTOK, YOUTUBE)
+├── is_verified (Boolean)
+├── encrypted_refresh_token (AES-256-GCM)
+└── Standard Auth.js fields
+
+AudienceSnapshot
+├── platform_type
+├── age_demographics (JSONB)
+├── geo_distribution (JSONB)
+└── gender_split (JSONB)
+```
+
+### Supported Platforms
+- `PlatformType.YOUTUBE` - Google OAuth with YouTube Data API scopes
+- `PlatformType.IG` - Instagram Business API (future)
+- `PlatformType.TIKTOK` - TikTok Creator API (future)
+
+---
+
+## Key Files Reference
+
+| File | Purpose |
+|------|---------|
+| `src/auth.ts` | Auth.js configuration with Prisma Adapter |
+| `src/lib/encryption.ts` | AES-256-GCM token encryption utilities |
+| `src/lib/prisma.ts` | Prisma client singleton |
+| `src/app/api/auth/[...nextauth]/route.ts` | Auth route handlers |
+| `prisma/schema.prisma` | Database schema definitions |
+
+---
+
+## Environment Variables
+
+| Variable | Purpose |
+|----------|---------|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `AUTH_SECRET` | NextAuth secret (`openssl rand -base64 32`) |
+| `ENCRYPTION_KEY` | 64 hex chars for AES-256 (`openssl rand -hex 32`) |
+| `GOOGLE_CLIENT_ID` | Google OAuth credentials |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth credentials |
+
+---
+
+## Remember
+
+1. **No hallucinations** - Stay within Phase 1 scope
+2. **No scrapers** - Official APIs or user input only
+3. **Encrypt tokens** - Always use `@/lib/encryption` for OAuth tokens
+4. **Mobile-first** - 80% of users are on mobile
+5. **RSC by default** - Client components only when necessary

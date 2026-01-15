@@ -1,36 +1,167 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Curately Creator OS
+
+A business intelligence ecosystem for creators, built on the "Give-to-Get" strategy.
+
+**Give:** Professional Live Media Kits and Signal Invoicer  
+**Get:** First-party, verified creator data via persistent OAuth connections
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | Next.js 15 (App Router, RSC) |
+| UI | Shadcn UI + Tailwind CSS |
+| Auth | Auth.js (NextAuth) v5 |
+| Database | PostgreSQL + Prisma |
+| Encryption | AES-256-GCM |
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- PostgreSQL database
+- Google Cloud Console project (for YouTube OAuth)
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Environment Setup
+
+Create a `.env.local` file in the root directory:
+
+```env
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/curately_db?schema=public"
+
+# Auth.js
+AUTH_SECRET="generate-with-openssl-rand-base64-32"
+AUTH_URL="http://localhost:3000"
+
+# Google OAuth (YouTube)
+GOOGLE_CLIENT_ID="your-client-id.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="your-client-secret"
+
+# Token Encryption (AES-256-GCM)
+ENCRYPTION_KEY="generate-with-openssl-rand-hex-32"
+```
+
+Generate secrets:
+```bash
+# AUTH_SECRET
+openssl rand -base64 32
+
+# ENCRYPTION_KEY (64 hex characters)
+openssl rand -hex 32
+```
+
+### 3. Database Setup
+
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Push schema to database (development)
+npx prisma db push
+
+# Or run migrations (production)
+npx prisma migrate dev
+```
+
+### 4. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+curately-creator-os/
+├── prisma/
+│   └── schema.prisma      # Database models
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── auth/      # Auth.js route handlers
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── auth.ts            # Auth.js configuration
+│   └── lib/
+│       ├── encryption.ts  # AES-256-GCM utilities
+│       └── prisma.ts      # Prisma singleton
+├── docs/
+│   └── PRD.md             # Product Requirements
+└── .cursorrules           # AI development guidelines
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Phase 1 Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Unified Identity Management
+- [ ] Single Sign-On (SSO)
+- [ ] Multi-platform account linking (IG, TikTok, YouTube)
+- [ ] Encrypted token storage
 
-## Deploy on Vercel
+### Live Media Kit
+- [ ] SEO-optimized public creator pages
+- [ ] Real-time follower counts & engagement rates
+- [ ] Audience demographics (Age/Gender/Geo)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Signal Invoicer
+- [ ] Structured invoice generation
+- [ ] Brand name capture & normalization
+- [ ] Deliverables tracking
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Data Models
+
+### Identity Graph
+- **User**: Core identity with `internal_uid`, email, name
+- **Account**: Platform connections with encrypted tokens
+- **AudienceSnapshot**: Time-series demographic data (JSONB)
+
+### Supported Platforms
+- YouTube (Google OAuth) - Planned
+- Instagram Business API - Planned
+
+
+---
+
+## Development Guidelines
+
+1. **Server Components by default** - Only use `'use client'` for interactive UI
+2. **Mobile-first design** - 80% of users are on mobile
+3. **No scrapers** - All data from official APIs or user input
+4. **Encrypt all tokens** - Use `@/lib/encryption` for OAuth tokens
+5. **Strict TypeScript** - No `any` types
+
+---
+
+## Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
+
+---
+
+## Documentation
+
+- [Product Requirements (PRD)](docs/PRD.md) - Full project context and specifications
