@@ -1,7 +1,8 @@
 "use client";
 
 import { useTheme } from "@/components/theme-provider";
-import { THEMES, ThemeKey } from "@/lib/themes";
+import { THEMES } from "@/lib/themes";
+import { ThemeKey } from "@/types/theme";
 import { CheckCircle2 } from "lucide-react";
 
 export function ThemeToggler() {
