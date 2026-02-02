@@ -1,8 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Theme, ThemeKey } from "@/types/theme";
-import { THEMES, GOOGLE_FONTS_URLS } from "@/lib/themes";
+import { THEMES } from "@/lib/themes";
 
 interface ThemeContextType {
   theme: Theme;
@@ -11,27 +11,26 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const STORAGE_KEY = "curately.theme";
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [activeThemeKey, setActiveThemeKey] = useState<ThemeKey>("noir");
 
-  // Load all fonts on mount to ensure instant switching (as per sample logic)
-  // or we could load them dynamically. Given the "instant" requirement, preloading is better.
   useEffect(() => {
-    GOOGLE_FONTS_URLS.forEach((url) => {
-      if (!document.querySelector(`link[href="${url}"]`)) {
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = url;
-        document.head.appendChild(link);
-      }
-    });
+    const saved = window.localStorage.getItem(STORAGE_KEY) as ThemeKey | null;
+    if (saved && saved in THEMES) setActiveThemeKey(saved);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = activeThemeKey;
+    window.localStorage.setItem(STORAGE_KEY, activeThemeKey);
+  }, [activeThemeKey]);
 
   const setTheme = (key: ThemeKey) => {
     setActiveThemeKey(key);
   };
 
-  const theme = THEMES[activeThemeKey];
+  const theme = useMemo(() => THEMES[activeThemeKey], [activeThemeKey]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
