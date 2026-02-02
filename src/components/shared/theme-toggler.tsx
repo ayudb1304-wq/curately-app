@@ -5,6 +5,13 @@ import { THEMES } from "@/lib/themes";
 import { ThemeKey } from "@/types/theme";
 import { CheckCircle2 } from "lucide-react";
 
+const themeHeadingFontFamily: Record<ThemeKey, string> = {
+  noir: "var(--font-playfair)",
+  cyber: "var(--font-space)",
+  muse: "var(--font-quicksand)",
+  pop: "var(--font-archivo-black)",
+};
+
 export function ThemeToggler() {
   const { theme, setTheme } = useTheme();
 
@@ -32,7 +39,7 @@ export function ThemeToggler() {
             >
               <div 
                 className={`text-lg mb-1 ${isActive ? t.accentText : 'text-slate-600'}`}
-                style={{ fontFamily: t.signatureFont }}
+                style={{ fontFamily: themeHeadingFontFamily[key] }}
               >
                 {t.name.split(' ')[0]}
               </div>

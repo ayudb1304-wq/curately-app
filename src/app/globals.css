@@ -6,8 +6,50 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-metrics);
+}
+
+/* Typography tokens (driven by ThemeProvider -> html[data-theme]) */
+:root {
+  --font-body: var(--font-inter);
+  --font-heading: var(--font-playfair);
+  --font-metrics: var(--font-inter);
+}
+
+html[data-theme="noir"] {
+  --font-heading: var(--font-playfair);
+  --font-body: var(--font-inter);
+  --font-metrics: var(--font-inter);
+}
+
+html[data-theme="cyber"] {
+  --font-heading: var(--font-space);
+  --font-body: var(--font-inter);
+  --font-metrics: var(--font-jetbrains);
+}
+
+html[data-theme="muse"] {
+  --font-heading: var(--font-quicksand);
+  --font-body: var(--font-inter);
+  --font-metrics: var(--font-inter);
+}
+
+html[data-theme="pop"] {
+  --font-heading: var(--font-archivo-black);
+  --font-body: var(--font-inter);
+  --font-metrics: var(--font-inter);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+.font-body {
+  font-family: var(--font-body);
+}
+.font-metrics {
+  font-family: var(--font-metrics);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Custom scrollbar hiding utilities */
@@ -139,5 +181,6 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
   }
 }

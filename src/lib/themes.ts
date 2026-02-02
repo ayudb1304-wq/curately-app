@@ -12,8 +12,8 @@ export const THEMES: Record<ThemeKey, Theme> = {
     card: 'bg-white',
     cardBorder: 'border-slate-100',
     headerGradient: 'from-black/40 via-transparent to-white',
-    signatureFont: "'Loved by the King', cursive",
-    bodyFont: "'Inter', sans-serif",
+    signatureFont: "var(--font-heading)",
+    bodyFont: "var(--font-body)",
     accentText: 'text-indigo-600',
     accentBg: 'bg-indigo-600',
     accentShadow: 'shadow-indigo-100',
@@ -30,8 +30,8 @@ export const THEMES: Record<ThemeKey, Theme> = {
     card: 'bg-zinc-900/40',
     cardBorder: 'border-zinc-800',
     headerGradient: 'from-lime-400/20 via-transparent to-[#050505]',
-    signatureFont: "'Rock Salt', cursive",
-    bodyFont: "'JetBrains Mono', monospace",
+    signatureFont: "var(--font-heading)",
+    bodyFont: "var(--font-body)",
     accentText: 'text-lime-400',
     accentBg: 'bg-lime-400',
     accentShadow: 'shadow-lime-900/50',
@@ -48,8 +48,8 @@ export const THEMES: Record<ThemeKey, Theme> = {
     card: 'bg-white',
     cardBorder: 'border-[#e0d6c5]',
     headerGradient: 'from-[#2d241e]/20 via-transparent to-[#faf7f2]',
-    signatureFont: "'Zeyada', cursive",
-    bodyFont: "'Fraunces', serif",
+    signatureFont: "var(--font-heading)",
+    bodyFont: "var(--font-body)",
     accentText: 'text-orange-900',
     accentBg: 'bg-orange-900',
     accentShadow: 'shadow-orange-100',
@@ -66,22 +66,11 @@ export const THEMES: Record<ThemeKey, Theme> = {
     card: 'bg-white',
     cardBorder: 'border-slate-950',
     headerGradient: 'from-blue-600/30 via-transparent to-[#fff952]',
-    signatureFont: "'Gloria Hallelujah', cursive",
-    bodyFont: "'Inter', sans-serif",
+    signatureFont: "var(--font-heading)",
+    bodyFont: "var(--font-body)",
     accentText: 'text-blue-700',
     accentBg: 'bg-blue-600',
     accentShadow: 'shadow-blue-200',
     sigShadow: 'drop-shadow-[0_2px_0_white]'
   }
 };
-
-export const GOOGLE_FONTS_URLS = [
-  'https://fonts.googleapis.com/css2?family=Loved+by+the+King&display=swap',
-  'https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap',
-  'https://fonts.googleapis.com/css2?family=Zeyada&display=swap',
-  'https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap',
-  'https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap',
-  'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,900&display=swap',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap'
-];
-

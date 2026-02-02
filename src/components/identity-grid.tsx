@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { useMemo, useState } from "react";
 import { useTheme } from "@/components/theme-provider";
 import { YouTubeProfileResult } from "@/app/_actions/youtube";
 import {
@@ -20,9 +21,17 @@ import {
   AlertCircle,
   Link2,
   Sparkles,
+  LockKeyhole,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface IdentityGridProps {
   youtubeData: YouTubeProfileResult;
@@ -30,6 +39,25 @@ interface IdentityGridProps {
 
 export function IdentityGrid({ youtubeData }: IdentityGridProps) {
   const { theme } = useTheme();
+  const [sovereigntyOpen, setSovereigntyOpen] = useState(false);
+  const [platformFocus, setPlatformFocus] = useState<"YouTube" | "Instagram" | "TikTok">("YouTube");
+
+  const youtubeConnected = youtubeData.success;
+
+  const onDisconnectedClick = (platform: "YouTube" | "Instagram" | "TikTok") => {
+    setPlatformFocus(platform);
+    setSovereigntyOpen(true);
+  };
+
+  const platformMeta = useMemo(() => {
+    const map = {
+      YouTube: { icon: Youtube, accent: "text-red-500", connectHref: "/api/auth/signin/google", connectLabel: "Connect YouTube" },
+      Instagram: { icon: Instagram, accent: "text-pink-500", connectHref: "", connectLabel: "Connect Instagram" },
+      TikTok: { icon: Music2, accent: "text-zinc-900 dark:text-zinc-50", connectHref: "", connectLabel: "Connect TikTok" },
+    } as const;
+    return map[platformFocus];
+  }, [platformFocus]);
+  const PlatformIcon = platformMeta.icon;
 
   return (
     <div className="space-y-4" style={{ fontFamily: theme.bodyFont }}>
@@ -46,20 +74,93 @@ export function IdentityGrid({ youtubeData }: IdentityGridProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <YouTubeCard data={youtubeData} theme={theme} />
-        <GhostPlatformCard
+        <YouTubeCard
+          data={youtubeData}
+          theme={theme}
+          onDisconnectedClick={() => onDisconnectedClick("YouTube")}
+        />
+        <DisconnectedPlatformCard
           platform="Instagram"
           Icon={Instagram}
-          badgeLabel="Coming Soon"
-          description="Official Instagram Business API linking will be available in a future update."
+          onClick={() => onDisconnectedClick("Instagram")}
         />
-        <GhostPlatformCard
+        <DisconnectedPlatformCard
           platform="TikTok"
           Icon={Music2}
-          badgeLabel="Early Access"
-          description="TikTok Creator API access is rolling out. Your dashboard will support official linking once enabled."
+          onClick={() => onDisconnectedClick("TikTok")}
         />
       </div>
+
+      <Dialog open={sovereigntyOpen} onOpenChange={setSovereigntyOpen}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="font-heading">Data Sovereignty</DialogTitle>
+            <DialogDescription>
+              Curately only uses official OAuth connections—no scraping. When you connect a platform, your tokens are encrypted at rest using <span className="font-semibold">AES-256-GCM</span> (via <span className="font-mono text-xs">@/lib/encryption</span>).
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-2 space-y-4">
+            <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-950/30 p-4">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-900/40 flex items-center justify-center">
+                  <PlatformIcon className={cn("h-5 w-5", platformMeta.accent)} />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                    {platformFocus} connection
+                  </div>
+                  <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
+                    You stay in control. You can revoke access anytime from your provider dashboard. We store refresh tokens only in encrypted form and never expose them client-side.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20 p-4">
+                <div className="flex items-center gap-2">
+                  <LockKeyhole className="h-4 w-4 text-emerald-600" />
+                  <div className="text-sm font-semibold">Encrypted at rest</div>
+                </div>
+                <div className="mt-1 text-xs text-zinc-600 dark:text-zinc-300">
+                  Refresh tokens are protected using AES-256-GCM encryption before being persisted.
+                </div>
+              </div>
+              <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20 p-4">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-indigo-600" />
+                  <div className="text-sm font-semibold">Official APIs only</div>
+                </div>
+                <div className="mt-1 text-xs text-zinc-600 dark:text-zinc-300">
+                  Verified metrics come from the platform’s official OAuth + API scopes.
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                Status:{" "}
+                <span className="font-semibold text-zinc-700 dark:text-zinc-200">
+                  {platformFocus === "YouTube" && youtubeConnected ? "Connected" : "Disconnected"}
+                </span>
+              </div>
+              {platformFocus === "YouTube" && !youtubeConnected ? (
+                <Button asChild className={cn(theme.accentBg, theme.id === "cyber" ? "text-black" : "text-white")}>
+                  <Link href={platformMeta.connectHref} onClick={() => setSovereigntyOpen(false)}>
+                    <Link2 className="w-4 h-4 mr-2" />
+                    {platformMeta.connectLabel}
+                  </Link>
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={() => setSovereigntyOpen(false)}>
+                  Close
+                </Button>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -68,9 +169,11 @@ export function IdentityGrid({ youtubeData }: IdentityGridProps) {
 function YouTubeCard({
   data,
   theme,
+  onDisconnectedClick,
 }: {
   data: YouTubeProfileResult;
   theme: ReturnType<typeof useTheme>["theme"];
+  onDisconnectedClick: () => void;
 }) {
   const isConnected = data.success;
   const isDisconnected = !data.success && data.error === "No YouTube account linked";
@@ -78,6 +181,9 @@ function YouTubeCard({
 
   return (
     <Card
+      onClick={() => {
+        if (isDisconnected) onDisconnectedClick();
+      }}
       className={cn(
         "relative overflow-hidden rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 shadow-sm transition-all",
         "bg-white/70 dark:bg-zinc-900/60 backdrop-blur",
@@ -177,6 +283,7 @@ function YouTubeCard({
                 theme.accentBg,
                 "text-white"
               )}
+              onClick={(e) => e.stopPropagation()}
             >
               <Link href="/api/auth/signin/google">
                 <Link2 className="w-4 h-4 mr-2" />
@@ -215,19 +322,26 @@ function YouTubeCard({
   );
 }
 
-function GhostPlatformCard({
+function DisconnectedPlatformCard({
   platform,
   Icon,
-  badgeLabel,
-  description,
+  onClick,
 }: {
   platform: string;
   Icon: React.ComponentType<{ className?: string }>;
-  badgeLabel: string;
-  description: string;
+  onClick: () => void;
 }) {
   return (
-    <Card className="relative overflow-hidden rounded-2xl border border-dashed border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-950/20 shadow-sm">
+    <Card
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") onClick();
+      }}
+      className="relative overflow-hidden rounded-2xl border border-dashed border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-950/20 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      aria-label={`${platform} connection status (disconnected)`}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
@@ -240,25 +354,21 @@ function GhostPlatformCard({
           </div>
 
           <Badge
-            variant="secondary"
-            className="flex-shrink-0 rounded-full text-[11px] font-black uppercase tracking-widest bg-zinc-100 text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 border border-zinc-200/60 dark:border-zinc-800/80"
+            variant="outline"
+            className="flex-shrink-0 rounded-full text-[11px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 border-zinc-200/70 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20"
           >
-            {badgeLabel}
+            Disconnected
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <p className="text-sm text-zinc-600 dark:text-zinc-300">{description}</p>
-        <Button
-          variant="outline"
-          disabled
-          className="w-full font-black text-xs uppercase tracking-widest border-zinc-200/70 dark:border-zinc-800/80"
-        >
-          Connect {platform}
-        </Button>
-        <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
-          Official OAuth connection will appear here when available.
+        <p className="text-sm text-zinc-600 dark:text-zinc-300">
+          Click to review Curately’s data sovereignty model and token encryption guarantees.
         </p>
+        <div className="flex items-center gap-2 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <ShieldCheck className="h-4 w-4" />
+          <span>AES-256-GCM encrypted at rest • Official APIs only</span>
+        </div>
       </CardContent>
     </Card>
   );
