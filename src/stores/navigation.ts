@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 
-export type NavigationTab = "home" | "admin" | "invoices";
+export type NavigationTab = "home" | "admin" | "invoices" | "settings";
 
 interface NavigationState {
   activeTab: NavigationTab;

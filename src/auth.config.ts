@@ -49,7 +49,8 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user;
       const isProtectedRoute =
         nextUrl.pathname.startsWith("/admin") ||
-        nextUrl.pathname.startsWith("/invoicer");
+        nextUrl.pathname.startsWith("/invoicer") ||
+        nextUrl.pathname.startsWith("/settings");
 
       if (isProtectedRoute) {
         // Require authentication for protected routes

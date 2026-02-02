@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { StudioLayout } from "@/components/studio-layout";
 import { PWAInstallPrompt } from "@/components/shared/pwa-install-prompt";
 import { cn } from "@/lib/utils";
+import { AppSessionProvider } from "@/components/session-provider";
 import {
   Inter,
   Playfair_Display,
@@ -67,6 +68,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // NOTE: Root layout stays server-side; we hydrate a client SessionProvider for `useSession`.
   return (
     <html lang="en">
       <body
@@ -81,10 +83,12 @@ export default function RootLayout({
         )}
       >
         <ThemeProvider>
-          <StudioLayout>
-            {children}
-            <PWAInstallPrompt />
-          </StudioLayout>
+          <AppSessionProvider session={null}>
+            <StudioLayout>
+              {children}
+              <PWAInstallPrompt />
+            </StudioLayout>
+          </AppSessionProvider>
         </ThemeProvider>
       </body>
     </html>
