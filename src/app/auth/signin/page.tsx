@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
@@ -106,19 +107,19 @@ export default function SignInPage() {
         <div className="pt-8 space-y-4">
           <p className="text-zinc-600 text-xs leading-relaxed">
             By continuing, you agree to our{" "}
-            <a
+            <Link
               href="/terms"
               className="text-zinc-400 hover:text-lime-400 underline underline-offset-2 transition-colors"
             >
               Terms of Service
-            </a>{" "}
+            </Link>{" "}
             and{" "}
-            <a
+            <Link
               href="/privacy"
               className="text-zinc-400 hover:text-lime-400 underline underline-offset-2 transition-colors"
             >
               Privacy Policy
-            </a>
+            </Link>
             .
           </p>
 

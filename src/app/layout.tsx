@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased bg-zinc-100 dark:bg-zinc-900">
+      <body className="antialiased bg-zinc-50 dark:bg-zinc-950">
         <ThemeProvider>
           <StudioLayout>
             {children}

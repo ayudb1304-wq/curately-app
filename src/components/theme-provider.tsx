@@ -13,12 +13,10 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [activeThemeKey, setActiveThemeKey] = useState<ThemeKey>("noir");
-  const [mounted, setMounted] = useState(false);
 
   // Load all fonts on mount to ensure instant switching (as per sample logic)
   // or we could load them dynamically. Given the "instant" requirement, preloading is better.
   useEffect(() => {
-    setMounted(true);
     GOOGLE_FONTS_URLS.forEach((url) => {
       if (!document.querySelector(`link[href="${url}"]`)) {
         const link = document.createElement("link");
