@@ -14,12 +14,11 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const STORAGE_KEY = "curately.theme";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [activeThemeKey, setActiveThemeKey] = useState<ThemeKey>("noir");
-
-  useEffect(() => {
+  const [activeThemeKey, setActiveThemeKey] = useState<ThemeKey>(() => {
+    if (typeof window === "undefined") return "noir";
     const saved = window.localStorage.getItem(STORAGE_KEY) as ThemeKey | null;
-    if (saved && saved in THEMES) setActiveThemeKey(saved);
-  }, []);
+    return saved && saved in THEMES ? saved : "noir";
+  });
 
   useEffect(() => {
     document.documentElement.dataset.theme = activeThemeKey;

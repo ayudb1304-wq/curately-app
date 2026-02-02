@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Eye, Plus, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useTheme } from "@/components/theme-provider";
+import type { Theme } from "@/types/theme";
 
 type StepId = "brand" | "deliverables" | "payment";
 
@@ -30,6 +31,151 @@ function formatMoney(amount: number, currency: string) {
   } catch {
     return `${currency} ${amount.toFixed(2)}`;
   }
+}
+
+function InvoiceStepPill({
+  id,
+  label,
+  active,
+  onSelect,
+  theme,
+}: {
+  id: StepId;
+  label: string;
+  active: boolean;
+  onSelect: (id: StepId) => void;
+  theme: Theme;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(id)}
+      className={cn(
+        "rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-widest transition-colors border",
+        active
+          ? cn(theme.accentBg, theme.id === "cyber" ? "text-black" : "text-white", "border-transparent")
+          : "bg-background text-zinc-600 dark:text-zinc-300 border-zinc-200/70 dark:border-zinc-800/80 hover:bg-accent"
+      )}
+    >
+      {label}
+    </button>
+  );
+}
+
+function InvoicePreview({
+  compact,
+  projectName,
+  invoiceNumber,
+  paymentTerms,
+  brandName,
+  brandEmail,
+  subtotal,
+  currency,
+  deliverables,
+  notes,
+  theme,
+}: {
+  compact?: boolean;
+  projectName: string;
+  invoiceNumber: string;
+  paymentTerms: string;
+  brandName: string;
+  brandEmail: string;
+  subtotal: number;
+  currency: string;
+  deliverables: Deliverable[];
+  notes: string;
+  theme: Theme;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/30",
+        compact ? "p-4" : "p-6"
+      )}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+            Signal Invoicer
+          </div>
+          <div className={cn("text-xl font-black tracking-tight font-heading")}>Invoice</div>
+          <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
+            {projectName ? projectName : "Campaign / Project"}
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+            Invoice #
+          </div>
+          <div className="font-mono text-sm">{invoiceNumber}</div>
+          <div className="mt-2">
+            <Badge variant="secondary" className="border border-zinc-200/70 dark:border-zinc-800/80">
+              {paymentTerms}
+            </Badge>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 grid grid-cols-2 gap-4">
+        <div className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+            Bill To
+          </div>
+          <div className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+            {brandName || "Brand / Agency"}
+          </div>
+          <div className="text-xs text-zinc-600 dark:text-zinc-300">{brandEmail || "billing@brand.com"}</div>
+        </div>
+        <div className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+            Total
+          </div>
+          <div className={cn("mt-1 text-2xl font-black tracking-tight", theme.id === "cyber" ? "font-metrics" : "font-heading")}>
+            {formatMoney(subtotal, currency)}
+          </div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400">Subtotal (no taxes applied)</div>
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <div className="flex items-center justify-between">
+          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+            Deliverables
+          </div>
+          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+            Qty × Rate
+          </div>
+        </div>
+        <div className="mt-2 divide-y divide-zinc-200/70 dark:divide-zinc-800/80 rounded-xl border border-zinc-200/70 dark:border-zinc-800/80 overflow-hidden">
+          {deliverables.map((d) => (
+            <div key={d.id} className="flex items-start justify-between gap-4 bg-white/60 dark:bg-zinc-950/20 p-3">
+              <div className="min-w-0">
+                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-50 truncate">
+                  {d.description || "Deliverable"}
+                </div>
+              </div>
+              <div className="text-right flex-shrink-0">
+                <div className="text-xs text-zinc-600 dark:text-zinc-300">
+                  {d.quantity} × {formatMoney(d.rate, currency)}
+                </div>
+                <div className="text-sm font-black">{formatMoney(d.quantity * d.rate, currency)}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-5 rounded-xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/20 p-3">
+        <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+          Notes
+        </div>
+        <div className="mt-1 text-sm text-zinc-700 dark:text-zinc-200 whitespace-pre-wrap">
+          {notes || "Add terms, usage, and payment notes."}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function InvoiceTool({
@@ -77,112 +223,6 @@ export function InvoiceTool({
   const [previewOpen, setPreviewOpen] = useState(false);
   const isMobile = mode === "page";
 
-  const StepPill = ({ id, label }: { id: StepId; label: string }) => (
-    <button
-      type="button"
-      onClick={() => setStep(id)}
-      className={cn(
-        "rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-widest transition-colors border",
-        step === id
-          ? cn(theme.accentBg, theme.id === "cyber" ? "text-black" : "text-white", "border-transparent")
-          : "bg-background text-zinc-600 dark:text-zinc-300 border-zinc-200/70 dark:border-zinc-800/80 hover:bg-accent"
-      )}
-    >
-      {label}
-    </button>
-  );
-
-  const Preview = ({ compact }: { compact?: boolean }) => (
-    <div className={cn("rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/30", compact ? "p-4" : "p-6")}>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
-            Signal Invoicer
-          </div>
-          <div className={cn("text-xl font-black tracking-tight font-heading")}>Invoice</div>
-          <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
-            {projectName ? projectName : "Campaign / Project"}
-          </div>
-        </div>
-        <div className="text-right">
-          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
-            Invoice #
-          </div>
-          <div className="font-mono text-sm">{invoiceNumber}</div>
-          <div className="mt-2">
-            <Badge variant="secondary" className="border border-zinc-200/70 dark:border-zinc-800/80">
-              {paymentTerms}
-            </Badge>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-5 grid grid-cols-2 gap-4">
-        <div className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/20 p-3">
-          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
-            Bill To
-          </div>
-          <div className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            {brandName || "Brand / Agency"}
-          </div>
-          <div className="text-xs text-zinc-600 dark:text-zinc-300">
-            {brandEmail || "billing@brand.com"}
-          </div>
-        </div>
-        <div className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/20 p-3">
-          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
-            Total
-          </div>
-          <div className={cn("mt-1 text-2xl font-black tracking-tight", theme.id === "cyber" ? "font-metrics" : "font-heading")}>
-            {formatMoney(subtotal, currency)}
-          </div>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400">
-            Subtotal (no taxes applied)
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-5">
-        <div className="flex items-center justify-between">
-          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
-            Deliverables
-          </div>
-          <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
-            Qty × Rate
-          </div>
-        </div>
-        <div className="mt-2 divide-y divide-zinc-200/70 dark:divide-zinc-800/80 rounded-xl border border-zinc-200/70 dark:border-zinc-800/80 overflow-hidden">
-          {deliverables.map((d) => (
-            <div key={d.id} className="flex items-start justify-between gap-4 bg-white/60 dark:bg-zinc-950/20 p-3">
-              <div className="min-w-0">
-                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-50 truncate">
-                  {d.description || "Deliverable"}
-                </div>
-              </div>
-              <div className="text-right flex-shrink-0">
-                <div className="text-xs text-zinc-600 dark:text-zinc-300">
-                  {d.quantity} × {formatMoney(d.rate, currency)}
-                </div>
-                <div className="text-sm font-black">
-                  {formatMoney(d.quantity * d.rate, currency)}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-5 rounded-xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/20 p-3">
-        <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
-          Notes
-        </div>
-        <div className="mt-1 text-sm text-zinc-700 dark:text-zinc-200 whitespace-pre-wrap">
-          {notes || "Add terms, usage, and payment notes."}
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className={cn(mode === "page" ? "p-4 sm:p-6 lg:p-8" : "p-0")}>
       {mode === "page" && (
@@ -200,9 +240,9 @@ export function InvoiceTool({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <StepPill id="brand" label="Brand" />
-              <StepPill id="deliverables" label="Deliverables" />
-              <StepPill id="payment" label="Payment" />
+              <InvoiceStepPill id="brand" label="Brand" active={step === "brand"} onSelect={setStep} theme={theme} />
+              <InvoiceStepPill id="deliverables" label="Deliverables" active={step === "deliverables"} onSelect={setStep} theme={theme} />
+              <InvoiceStepPill id="payment" label="Payment" active={step === "payment"} onSelect={setStep} theme={theme} />
             </div>
           </div>
         </header>
@@ -225,9 +265,9 @@ export function InvoiceTool({
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="flex items-center gap-2">
-              <StepPill id="brand" label="Brand" />
-              <StepPill id="deliverables" label="Deliverables" />
-              <StepPill id="payment" label="Payment" />
+              <InvoiceStepPill id="brand" label="Brand" active={step === "brand"} onSelect={setStep} theme={theme} />
+              <InvoiceStepPill id="deliverables" label="Deliverables" active={step === "deliverables"} onSelect={setStep} theme={theme} />
+              <InvoiceStepPill id="payment" label="Payment" active={step === "payment"} onSelect={setStep} theme={theme} />
             </div>
 
             {step === "brand" && (
@@ -443,7 +483,18 @@ export function InvoiceTool({
                   Premium Draft
                 </Badge>
               </div>
-              <Preview />
+              <InvoicePreview
+                projectName={projectName}
+                invoiceNumber={invoiceNumber}
+                paymentTerms={paymentTerms}
+                brandName={brandName}
+                brandEmail={brandEmail}
+                subtotal={subtotal}
+                currency={currency}
+                deliverables={deliverables}
+                notes={notes}
+                theme={theme}
+              />
             </div>
           </div>
         )}
@@ -468,7 +519,19 @@ export function InvoiceTool({
           <DialogHeader>
             <DialogTitle className="font-heading">Live Invoice Preview</DialogTitle>
           </DialogHeader>
-          <Preview compact />
+          <InvoicePreview
+            compact
+            projectName={projectName}
+            invoiceNumber={invoiceNumber}
+            paymentTerms={paymentTerms}
+            brandName={brandName}
+            brandEmail={brandEmail}
+            subtotal={subtotal}
+            currency={currency}
+            deliverables={deliverables}
+            notes={notes}
+            theme={theme}
+          />
         </DialogContent>
       </Dialog>
     </div>

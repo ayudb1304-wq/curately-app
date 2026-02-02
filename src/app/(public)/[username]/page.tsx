@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import Image from "next/image";
 import { useTheme } from "@/components/theme-provider";
 import { useParams } from "next/navigation";
 import {
@@ -172,13 +173,16 @@ export default function PublicProfilePage() {
         {/* Hero */}
         <section className="relative overflow-hidden rounded-3xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20">
           <div className="relative h-[260px] sm:h-[320px] md:h-[380px]">
-            <img
+            <Image
               src={profile.coverUrl}
+              alt="Cover"
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 1200px"
               className={cn(
-                "absolute inset-0 h-full w-full object-cover",
+                "object-cover",
                 theme.id === "cyber" ? "brightness-75 contrast-125 saturate-75" : ""
               )}
-              alt="Cover"
             />
             <div className={cn("absolute inset-0 bg-gradient-to-b", theme.headerGradient)} />
 
@@ -203,7 +207,13 @@ export default function PublicProfilePage() {
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div className="flex items-end gap-4">
                 <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-3xl overflow-hidden border-4 border-white/70 dark:border-zinc-950/40 shadow-xl">
-                  <img src={profile.avatarUrl} alt={profile.displayName} className="h-full w-full object-cover" />
+                  <Image
+                    src={profile.avatarUrl}
+                    alt={profile.displayName}
+                    width={160}
+                    height={160}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
                 <div className="pb-1">
                   <h1 className={cn("text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow", "font-heading")}>
