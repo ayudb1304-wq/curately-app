@@ -17,6 +17,8 @@ declare module "next-auth" {
       id: string;
       /** Golden Record identifier (UUID) - used for PWA analytics and cross-platform identity */
       internal_uid: string;
+      /** Public profile username for Media Kit URLs */
+      username: string | null;
     } & DefaultSession["user"];
   }
 }

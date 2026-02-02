@@ -27,6 +27,7 @@ enum PlatformType {
 model User {
   id            String    @id @default(cuid())
   internal_uid  String    @unique @default(uuid()) @db.Uuid
+  username      String?   @unique
   name          String?
   email         String    @unique
   emailVerified DateTime?

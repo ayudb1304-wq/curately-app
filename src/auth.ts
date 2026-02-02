@@ -42,21 +42,40 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
 
     /**
-     * Extend session with user ID and internal UID (Golden Record) for API calls
+     * Extend session with user ID, internal UID (Golden Record), username, and image for API calls
      * With JWT strategy, we receive token instead of user
      */
     async session({ session, token }) {
       if (session.user && token.sub) {
         session.user.id = token.sub;
 
-        // Fetch internal_uid from database for Golden Record identifier
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.sub },
-          select: { internal_uid: true },
-        });
+        try {
+          // Fetch user data from database for profile information
+          // This includes internal_uid, username, and custom profile image
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.sub },
+            select: { 
+              internal_uid: true,
+              username: true,
+              image: true,
+            },
+          });
 
-        if (dbUser) {
-          session.user.internal_uid = dbUser.internal_uid;
+          if (dbUser) {
+            session.user.internal_uid = dbUser.internal_uid;
+            session.user.username = dbUser.username ?? null;
+            
+            // Use database image if available (user may have uploaded custom avatar)
+            // This overrides the OAuth provider's default profile picture
+            if (dbUser.image) {
+              session.user.image = dbUser.image;
+            }
+          }
+        } catch (error) {
+          console.error("[Auth] Error fetching user data for session:", error);
+          // Set defaults if database query fails
+          session.user.internal_uid = "";
+          session.user.username = null;
         }
       }
       return session;

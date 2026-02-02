@@ -12,18 +12,43 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const STORAGE_KEY = "curately.theme";
+const DEFAULT_THEME: ThemeKey = "noir";
+
+// Themes that should activate dark mode (for Tailwind's dark: variants)
+const DARK_THEMES: ThemeKey[] = ["cyber"];
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [activeThemeKey, setActiveThemeKey] = useState<ThemeKey>(() => {
-    if (typeof window === "undefined") return "noir";
-    const saved = window.localStorage.getItem(STORAGE_KEY) as ThemeKey | null;
-    return saved && saved in THEMES ? saved : "noir";
-  });
+  // Always start with default theme to avoid hydration mismatch
+  const [activeThemeKey, setActiveThemeKey] = useState<ThemeKey>(DEFAULT_THEME);
+  const [mounted, setMounted] = useState(false);
 
+  // Load saved theme from localStorage after mount (client-side only)
   useEffect(() => {
-    document.documentElement.dataset.theme = activeThemeKey;
-    window.localStorage.setItem(STORAGE_KEY, activeThemeKey);
-  }, [activeThemeKey]);
+    setMounted(true);
+    const saved = window.localStorage.getItem(STORAGE_KEY) as ThemeKey | null;
+    if (saved && saved in THEMES) {
+      setActiveThemeKey(saved);
+    }
+  }, []);
+
+  // Update document, localStorage, and dark mode class when theme changes
+  useEffect(() => {
+    if (mounted) {
+      const root = document.documentElement;
+      
+      // Set the data-theme attribute for CSS variable overrides
+      root.dataset.theme = activeThemeKey;
+      
+      // Toggle the 'dark' class for Tailwind's dark: variants
+      if (DARK_THEMES.includes(activeThemeKey)) {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
+      
+      window.localStorage.setItem(STORAGE_KEY, activeThemeKey);
+    }
+  }, [activeThemeKey, mounted]);
 
   const setTheme = (key: ThemeKey) => {
     setActiveThemeKey(key);

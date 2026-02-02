@@ -36,12 +36,31 @@ export function StudioLayout({
   const pathname = usePathname();
   const { invoicerOpen, setInvoicerOpen, setActiveTab } = useNavigationStore();
   const [mobileNavHidden, setMobileNavHidden] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const lastScrollY = useRef(0);
   const rafRef = useRef<number | null>(null);
 
-  const { data: sessionHook } = useSession();
+  // Ensure hydration completes before showing session-dependent UI
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const { data: sessionHook, status } = useSession();
+  
+  // Prefer server-passed session (hydrated from root layout) over client hook
+  // This ensures immediate render with correct auth state
   const session = sessionProp ?? sessionHook ?? null;
-  const isAuthenticated = !!session?.user?.id;
+  
+  // Determine auth status with multiple fallback checks:
+  // 1. If we have sessionProp from server, trust it immediately (no hydration mismatch)
+  // 2. If using sessionHook, wait for mount to avoid hydration mismatch
+  // 3. Check user.id, user.email, or user.name as any could be populated
+  const hasSessionFromServer = !!sessionProp?.user;
+  const hasSessionFromHook = mounted && !!(sessionHook?.user?.id || sessionHook?.user?.email);
+  const isAuthenticated = hasSessionFromServer || hasSessionFromHook;
+  
+  // Only show loading state when we don't have server session and hook is loading
+  const isLoading = !sessionProp && status === "loading";
 
   const navItems: Array<{ href: string; label: string; icon: LucideIcon }> = useMemo(() => {
     const base: Array<{ href: string; label: string; icon: LucideIcon }> = [
@@ -50,14 +69,15 @@ export function StudioLayout({
       { href: "/invoices", label: "Invoices", icon: FileText },
     ];
 
-    if (!isAuthenticated) {
-      base.push({ href: "/auth/signin", label: "Sign In", icon: LogIn });
+    // Don't show Sign In while loading or if authenticated
+    if (isLoading || isAuthenticated) {
+      base.push({ href: "/settings", label: "Settings", icon: Settings });
       return base;
     }
 
-    base.push({ href: "/settings", label: "Settings", icon: Settings });
+    base.push({ href: "/auth/signin", label: "Sign In", icon: LogIn });
     return base;
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isLoading]);
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -113,7 +133,7 @@ export function StudioLayout({
     <div
       className={cn(
         "min-h-screen w-full transition-colors duration-500",
-        theme.appBg
+        "bg-background"
       )}
     >
       {!showAppShell ? (
@@ -125,25 +145,25 @@ export function StudioLayout({
           className={cn(
             "hidden md:flex md:flex-col md:sticky md:top-0 md:h-screen",
             "md:w-20 lg:w-64",
-            "border-r border-zinc-200/60 dark:border-zinc-800/80",
-            "bg-white/55 dark:bg-zinc-950/25 backdrop-blur-xl"
+            "border-r border-border",
+            "bg-sidebar/55 backdrop-blur-xl"
           )}
         >
-          <div className="px-4 lg:px-5 py-5 border-b border-zinc-200/60 dark:border-zinc-800/80">
+          <div className="px-4 lg:px-5 py-5 border-b border-border">
             <div className="flex items-center gap-3">
               <div
                 className={cn(
-                  "h-9 w-9 rounded-2xl border border-zinc-200/60 dark:border-zinc-800/80",
-                  "bg-white/60 dark:bg-zinc-950/40 backdrop-blur flex items-center justify-center"
+                  "h-9 w-9 rounded-2xl border border-border",
+                  "bg-card/60 backdrop-blur flex items-center justify-center"
                 )}
               >
-                <span className="font-black text-xs tracking-tight">C</span>
+                <span className="font-black text-xs tracking-tight text-foreground">C</span>
               </div>
               <div className="hidden lg:block">
-                <div className={cn("text-lg font-black tracking-tight", "font-heading")}>
+                <div className={cn("text-lg font-black tracking-tight text-foreground", "font-heading")}>
                   Curately
                 </div>
-                <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+                <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-muted-foreground">
                   Creator OS
                 </div>
               </div>
@@ -161,8 +181,8 @@ export function StudioLayout({
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold transition-colors",
                     active
-                      ? "bg-zinc-900 text-zinc-50 dark:bg-white dark:text-zinc-950"
-                      : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/70 dark:text-zinc-300 dark:hover:text-zinc-50 dark:hover:bg-zinc-900/40"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -172,14 +192,14 @@ export function StudioLayout({
             })}
           </nav>
 
-          <div className="px-4 lg:px-5 py-4 border-t border-zinc-200/60 dark:border-zinc-800/80">
+          <div className="px-4 lg:px-5 py-4 border-t border-border">
             {isAuthenticated ? (
               <div className="space-y-3">
                 <Link
                   href="/settings"
                   className={cn(
                     "flex flex-col lg:flex-row items-center gap-2 lg:gap-3 rounded-2xl px-2 py-2 transition-colors",
-                    "hover:bg-zinc-100/70 dark:hover:bg-zinc-900/40"
+                    "hover:bg-accent"
                   )}
                 >
                   <div
@@ -189,7 +209,7 @@ export function StudioLayout({
                       theme.id === "cyber" ? "text-black" : "text-white"
                     )}
                   >
-                    <Avatar className="h-9 w-9 ring-1 ring-white/30 dark:ring-black/20">
+                    <Avatar className="h-9 w-9 ring-1 ring-background/30">
                       <AvatarImage src={session?.user?.image ?? undefined} alt={session?.user?.name ?? "Creator"} />
                       <AvatarFallback className="text-xs font-black">
                         {initialsFromName(session?.user?.name)}
@@ -200,7 +220,7 @@ export function StudioLayout({
                   <div className="lg:hidden">
                     <Badge
                       variant="outline"
-                      className="px-1.5 py-0 font-mono text-[9px] leading-4 text-zinc-600 dark:text-zinc-300 border-zinc-200/60 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20"
+                      className="px-1.5 py-0 font-mono text-[9px] leading-4 text-muted-foreground border-border bg-card/60"
                       title={session?.user?.internal_uid ?? ""}
                     >
                       <Fingerprint className="h-3.5 w-3.5 mr-1" />
@@ -209,13 +229,13 @@ export function StudioLayout({
                   </div>
 
                   <div className="hidden lg:block min-w-0 flex-1">
-                    <div className="text-sm font-black tracking-tight text-zinc-950 dark:text-zinc-50 truncate">
+                    <div className="text-sm font-black tracking-tight text-foreground truncate">
                       {session?.user?.name ?? session?.user?.email ?? "Creator"}
                     </div>
                     <div className="mt-1 flex items-center gap-2">
                       <Badge
                         variant="outline"
-                        className="font-mono text-[10px] text-zinc-600 dark:text-zinc-300 border-zinc-200/60 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20"
+                        className="font-mono text-[10px] text-muted-foreground border-border bg-card/60"
                       >
                         <Fingerprint className="h-3.5 w-3.5 mr-1" />
                         {session?.user?.internal_uid}
@@ -227,7 +247,7 @@ export function StudioLayout({
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full justify-start rounded-xl border-zinc-200/60 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20"
+                  className="w-full justify-start rounded-xl"
                   onClick={() => signOut({ callbackUrl: "/" })}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
@@ -235,17 +255,17 @@ export function StudioLayout({
                   <span className="lg:hidden">Logout</span>
                 </Button>
 
-                <div className="hidden lg:block text-[11px] text-zinc-500 dark:text-zinc-400">
+                <div className="hidden lg:block text-[11px] text-muted-foreground">
                   Theme:{" "}
-                  <span className="font-semibold text-zinc-700 dark:text-zinc-200">
+                  <span className="font-semibold text-foreground">
                     {theme.name}
                   </span>
                 </div>
               </div>
             ) : (
-              <div className="hidden lg:block text-[11px] text-zinc-500 dark:text-zinc-400">
+              <div className="hidden lg:block text-[11px] text-muted-foreground">
                 Theme:{" "}
-                <span className="font-semibold text-zinc-700 dark:text-zinc-200">
+                <span className="font-semibold text-foreground">
                   {theme.name}
                 </span>
               </div>
@@ -256,7 +276,7 @@ export function StudioLayout({
         {/* Main Content */}
         <main className="flex-1">
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-6">
-            <div className="bg-white/70 dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/80 rounded-2xl shadow-sm backdrop-blur">
+            <div className="bg-card/70 border border-border rounded-2xl shadow-sm backdrop-blur">
               <RouteTransition>{children}</RouteTransition>
             </div>
           </div>
@@ -277,7 +297,7 @@ export function StudioLayout({
           <div className="mx-auto max-w-md">
             <div
               className={cn(
-                "relative grid items-center rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-950/70 backdrop-blur-xl shadow-lg px-2 py-2",
+                "relative grid items-center rounded-2xl border border-border bg-card/80 backdrop-blur-xl shadow-lg px-2 py-2",
                 isAuthenticated ? "grid-cols-5" : "grid-cols-3"
               )}
             >
@@ -289,8 +309,8 @@ export function StudioLayout({
                     className={cn(
                       "flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-[10px] font-bold uppercase tracking-widest transition-colors",
                       isActive("/admin")
-                        ? "text-zinc-900 dark:text-zinc-50"
-                        : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     <LayoutDashboard className={cn("h-5 w-5", isActive("/admin") ? "opacity-100" : "opacity-80")} />
@@ -320,8 +340,8 @@ export function StudioLayout({
                     className={cn(
                       "flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-[10px] font-bold uppercase tracking-widest transition-colors",
                       isActive("/invoices")
-                        ? "text-zinc-900 dark:text-zinc-50"
-                        : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     <FileText className={cn("h-5 w-5", isActive("/invoices") ? "opacity-100" : "opacity-80")} />
@@ -336,8 +356,8 @@ export function StudioLayout({
                     className={cn(
                       "flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-[10px] font-bold uppercase tracking-widest transition-colors",
                       isActive("/admin")
-                        ? "text-zinc-900 dark:text-zinc-50"
-                        : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     <LayoutDashboard className={cn("h-5 w-5", isActive("/admin") ? "opacity-100" : "opacity-80")} />
@@ -350,8 +370,8 @@ export function StudioLayout({
                     className={cn(
                       "flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-[10px] font-bold uppercase tracking-widest transition-colors",
                       isActive("/invoices")
-                        ? "text-zinc-900 dark:text-zinc-50"
-                        : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     <FileText className={cn("h-5 w-5", isActive("/invoices") ? "opacity-100" : "opacity-80")} />
@@ -381,8 +401,8 @@ export function StudioLayout({
                     className={cn(
                       "flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-[10px] font-bold uppercase tracking-widest transition-colors",
                       isActive("/settings")
-                        ? "text-zinc-900 dark:text-zinc-50"
-                        : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     <Settings className={cn("h-5 w-5", isActive("/settings") ? "opacity-100" : "opacity-80")} />
@@ -395,8 +415,8 @@ export function StudioLayout({
                     className={cn(
                       "flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-[10px] font-bold uppercase tracking-widest transition-colors",
                       isActive("/settings")
-                        ? "text-zinc-900 dark:text-zinc-50"
-                        : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                     aria-label="Profile"
                   >
@@ -416,7 +436,7 @@ export function StudioLayout({
                     </div>
                     <Badge
                       variant="outline"
-                      className="max-w-[70px] px-1 py-0 font-mono text-[8px] leading-4 text-zinc-600 dark:text-zinc-300 border-zinc-200/60 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20 truncate"
+                      className="max-w-[70px] px-1 py-0 font-mono text-[8px] leading-4 text-muted-foreground border-border bg-card/60 truncate"
                       title={session?.user?.internal_uid ?? ""}
                     >
                       {session?.user?.internal_uid}

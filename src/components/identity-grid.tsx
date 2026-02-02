@@ -196,7 +196,7 @@ function YouTubeCard({
       )}
       <CardHeader className="pb-3">
         {/* Header Row: Icon, Title, Badge */}
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3 min-w-0">
             <div
               className={cn(
@@ -211,29 +211,29 @@ function YouTubeCard({
                 )}
               />
             </div>
-            <CardTitle className="text-base font-black text-zinc-950 dark:text-zinc-50">
+            <CardTitle className="text-base font-black text-zinc-950 dark:text-zinc-50 truncate">
               YouTube
             </CardTitle>
           </div>
 
           {/* Status Badge */}
           {isConnected && (
-            <Badge className="flex-shrink-0 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-widest gap-1 border border-emerald-500/30 bg-emerald-500 text-white dark:bg-emerald-500/20 dark:text-emerald-200">
-              <CheckCircle2 className="w-3.5 h-3.5" />
+            <Badge className="self-start sm:self-auto rounded-full px-3 py-1 text-[10px] sm:text-[11px] font-black uppercase tracking-widest gap-1 border border-emerald-500/30 bg-emerald-500 text-white dark:bg-emerald-500/20 dark:text-emerald-200">
+              <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               Verified
             </Badge>
           )}
           {isDisconnected && (
             <Badge
               variant="outline"
-              className="flex-shrink-0 rounded-full text-[11px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 border-zinc-200/70 dark:border-zinc-800/80"
+              className="self-start sm:self-auto rounded-full px-2 py-0.5 text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 border-zinc-200/70 dark:border-zinc-800/80"
             >
               Not connected
             </Badge>
           )}
           {isError && (
-            <Badge className="flex-shrink-0 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-widest gap-1 border border-amber-500/30 bg-amber-500/20 text-amber-700 dark:text-amber-300">
-              <AlertCircle className="w-3.5 h-3.5" />
+            <Badge className="self-start sm:self-auto rounded-full px-3 py-1 text-[10px] sm:text-[11px] font-black uppercase tracking-widest gap-1 border border-amber-500/30 bg-amber-500/20 text-amber-700 dark:text-amber-300">
+              <AlertCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               Attention
             </Badge>
           )}
@@ -343,19 +343,19 @@ function DisconnectedPlatformCard({
       aria-label={`${platform} connection status (disconnected)`}
     >
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/80">
               <Icon className="h-5 w-5 text-zinc-500 dark:text-zinc-400" />
             </div>
-            <CardTitle className="text-base font-black text-zinc-950 dark:text-zinc-50">
+            <CardTitle className="text-base font-black text-zinc-950 dark:text-zinc-50 truncate">
               {platform}
             </CardTitle>
           </div>
 
           <Badge
             variant="outline"
-            className="flex-shrink-0 rounded-full text-[11px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 border-zinc-200/70 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20"
+            className="self-start sm:self-auto rounded-full px-2 py-0.5 text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 border-zinc-200/70 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20"
           >
             Disconnected
           </Badge>

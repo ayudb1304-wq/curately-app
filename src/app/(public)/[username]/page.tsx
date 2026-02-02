@@ -66,13 +66,13 @@ function PlatformMetricCard({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-3xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/30 backdrop-blur shadow-sm p-6",
+        "relative overflow-hidden rounded-3xl border border-border bg-card/70 backdrop-blur shadow-sm p-6",
         !connected && "cursor-pointer"
       )}
     >
       {!connected && (
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/5 dark:from-white/5 dark:to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-br from-background/10 to-foreground/5" />
           <div className="absolute inset-0 backdrop-blur-[2px]" />
         </div>
       )}
@@ -80,14 +80,14 @@ function PlatformMetricCard({
       <div className={cn("relative", !connected && "opacity-70")}>
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="h-10 w-10 rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-900/30 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-2xl border border-border bg-card/60 flex items-center justify-center">
               {icon}
             </div>
             <div className="min-w-0">
-              <div className="text-sm font-black tracking-tight text-zinc-950 dark:text-zinc-50 truncate">
+              <div className="text-sm font-black tracking-tight text-foreground truncate">
                 {platform}
               </div>
-              <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+              <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-muted-foreground">
                 {followersLabel}
               </div>
             </div>
@@ -100,7 +100,7 @@ function PlatformMetricCard({
           ) : (
             <Badge
               variant="secondary"
-              className="rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-widest gap-1 border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-100 dark:bg-zinc-900"
+              className="rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-widest gap-1 border border-border bg-muted"
             >
               <LockKeyhole className={cn("w-3.5 h-3.5", accentText)} />
               Verify to Unlock
@@ -109,27 +109,27 @@ function PlatformMetricCard({
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-3">
-          <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/20 p-3">
-            <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+          <div className="rounded-2xl border border-border bg-muted/70 p-3">
+            <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-muted-foreground">
               Total
             </div>
-            <div className={cn("mt-1 text-lg font-black", "font-metrics")}>
+            <div className={cn("mt-1 text-lg font-black text-foreground", "font-metrics")}>
               {connected ? followers : "—"}
             </div>
           </div>
-          <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/20 p-3">
-            <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+          <div className="rounded-2xl border border-border bg-muted/70 p-3">
+            <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-muted-foreground">
               Metric
             </div>
-            <div className="mt-1 text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+            <div className="mt-1 text-xs font-semibold text-foreground">
               {connected ? metricA : "Locked"}
             </div>
           </div>
-          <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/70 dark:bg-zinc-900/20 p-3">
-            <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+          <div className="rounded-2xl border border-border bg-muted/70 p-3">
+            <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-muted-foreground">
               Metric
             </div>
-            <div className="mt-1 text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+            <div className="mt-1 text-xs font-semibold text-foreground">
               {connected ? metricB : "Locked"}
             </div>
           </div>
@@ -155,23 +155,18 @@ export default function PublicProfilePage() {
 
   const ctaClassName = cn(
     "w-full font-black py-4 sm:py-5 rounded-2xl flex items-center justify-center gap-3",
-    "active:scale-[0.99] transition-all group overflow-hidden relative shadow-xl border",
-    theme.id === "noir"
-      ? "bg-slate-950 text-white border-transparent"
-      : theme.id === "cyber"
-      ? "bg-lime-400 text-black border-transparent"
-      : theme.id === "muse"
-      ? "bg-orange-800 text-white border-transparent"
-      : "bg-blue-600 text-white border-black"
+    "active:scale-[0.99] transition-all group overflow-hidden relative shadow-xl border border-transparent",
+    theme.accentBg,
+    theme.id === "cyber" ? "text-black" : "text-white"
   );
 
   return (
     <div
-      className={cn("min-h-screen transition-colors duration-500", theme.appBg)}
+      className={cn("min-h-screen transition-colors duration-500", "bg-background")}
     >
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-6 md:py-10">
         {/* Hero */}
-        <section className="relative overflow-hidden rounded-3xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20">
+        <section className="relative overflow-hidden rounded-3xl border border-border bg-card/60">
           <div className="relative h-[260px] sm:h-[320px] md:h-[380px]">
             <Image
               src={profile.coverUrl}
@@ -206,7 +201,7 @@ export default function PublicProfilePage() {
           <div className="relative px-5 sm:px-8 pb-6 -mt-14 sm:-mt-16">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div className="flex items-end gap-4">
-                <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-3xl overflow-hidden border-4 border-white/70 dark:border-zinc-950/40 shadow-xl">
+                <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-3xl overflow-hidden border-4 border-card/70 shadow-xl">
                   <Image
                     src={profile.avatarUrl}
                     alt={profile.displayName}
@@ -254,21 +249,21 @@ export default function PublicProfilePage() {
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Identity/Bio */}
           <aside className="lg:col-span-3 space-y-6">
-            <div className="rounded-3xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/30 backdrop-blur p-6 shadow-sm">
-              <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+            <div className="rounded-3xl border border-border bg-card/70 backdrop-blur p-6 shadow-sm">
+              <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-muted-foreground">
                 Identity
               </div>
-              <p className="mt-2 text-base text-zinc-800 dark:text-zinc-200 leading-relaxed">
+              <p className="mt-2 text-base text-foreground leading-relaxed">
                 {profile.bio}
               </p>
               <div className="mt-4 grid gap-2">
                 {profile.accounts.map((acc) => (
                   <div
                     key={acc.platform}
-                    className="flex items-center justify-between gap-3 rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/20 px-4 py-3"
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-muted/60 px-4 py-3"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <div className="h-8 w-8 rounded-xl border border-zinc-200/60 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20 flex items-center justify-center">
+                      <div className="h-8 w-8 rounded-xl border border-border bg-card/60 flex items-center justify-center">
                         {acc.platform === "YOUTUBE" ? (
                           <Youtube className="h-4 w-4 text-red-500" />
                         ) : (
@@ -276,10 +271,10 @@ export default function PublicProfilePage() {
                         )}
                       </div>
                       <div className="min-w-0">
-                        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-50 truncate">
+                        <div className="text-sm font-semibold text-foreground truncate">
                           @{acc.handle}
                         </div>
-                        <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                        <div className="text-[11px] text-muted-foreground">
                           Reach {acc.reach}
                         </div>
                       </div>
@@ -295,14 +290,14 @@ export default function PublicProfilePage() {
           <main className="lg:col-span-6 space-y-6">
             <div className="flex items-end justify-between">
               <div>
-                <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+                <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-muted-foreground">
                   Verified Metrics
                 </div>
-                <h2 className={cn("text-xl sm:text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50", "font-heading")}>
+                <h2 className={cn("text-xl sm:text-2xl font-black tracking-tight text-foreground", "font-heading")}>
                   Performance Snapshot
                 </h2>
               </div>
-              <Badge variant="outline" className="border-zinc-200/70 dark:border-zinc-800/80">
+              <Badge variant="outline" className="border-border">
                 Give-to-Get
               </Badge>
             </div>
@@ -341,17 +336,17 @@ export default function PublicProfilePage() {
             </div>
 
             {/* Lightweight chart placeholder */}
-            <div className="rounded-3xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/30 backdrop-blur p-6 shadow-sm">
+            <div className="rounded-3xl border border-border bg-card/70 backdrop-blur p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+                  <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-muted-foreground">
                     Momentum
                   </div>
-                  <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                  <div className="text-sm font-semibold text-foreground">
                     Audience growth (sample)
                   </div>
                 </div>
-                <Badge variant="secondary" className="border border-zinc-200/70 dark:border-zinc-800/80">
+                <Badge variant="secondary" className="border border-border">
                   30d
                 </Badge>
               </div>
@@ -360,32 +355,31 @@ export default function PublicProfilePage() {
                   <div
                     key={i}
                     className={cn(
-                      "rounded-xl",
-                      theme.id === "cyber" ? "bg-lime-400/40" : "bg-indigo-500/25",
-                      "border border-zinc-200/40 dark:border-zinc-800/50"
+                      "rounded-xl border border-border/40",
+                      theme.id === "cyber" ? "bg-lime-400/40" : "bg-primary/25"
                     )}
                     style={{ height: `${24 + ((i * 13) % 70)}px` }}
                   />
                 ))}
               </div>
-              <div className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
-                Ghost states appear when a platform isn’t connected—brands see verified data only.
+              <div className="mt-3 text-xs text-muted-foreground">
+                Ghost states appear when a platform isn't connected—brands see verified data only.
               </div>
             </div>
           </main>
 
           {/* Right: Contact/CTA */}
           <aside className="lg:col-span-3 space-y-6">
-            <div className="rounded-3xl border border-zinc-200/70 dark:border-zinc-800/80 bg-white/70 dark:bg-zinc-950/30 backdrop-blur p-6 shadow-sm">
-              <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-zinc-500 dark:text-zinc-400">
+            <div className="rounded-3xl border border-border bg-card/70 backdrop-blur p-6 shadow-sm">
+              <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-muted-foreground">
                 Contact
               </div>
               <div className="mt-3 space-y-3">
-                <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/20 px-4 py-3">
-                  <div className="text-[11px] font-black uppercase tracking-[0.24em] text-zinc-500 dark:text-zinc-400">
+                <div className="rounded-2xl border border-border bg-muted/60 px-4 py-3">
+                  <div className="text-[11px] font-black uppercase tracking-[0.24em] text-muted-foreground">
                     Email
                   </div>
-                  <div className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                  <div className="mt-1 text-sm font-semibold text-foreground">
                     {profile.contact.email}
                   </div>
                 </div>
@@ -396,7 +390,7 @@ export default function PublicProfilePage() {
                   </span>
                 </a>
               </div>
-              <div className="mt-4 text-xs text-zinc-500 dark:text-zinc-400">
+              <div className="mt-4 text-xs text-muted-foreground">
                 Brands get instant clarity; creators keep control via verified connections.
               </div>
             </div>

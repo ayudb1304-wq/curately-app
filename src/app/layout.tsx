@@ -5,6 +5,7 @@ import { StudioLayout } from "@/components/studio-layout";
 import { PWAInstallPrompt } from "@/components/shared/pwa-install-prompt";
 import { cn } from "@/lib/utils";
 import { AppSessionProvider } from "@/components/session-provider";
+import { auth } from "@/auth";
 import {
   Inter,
   Playfair_Display,
@@ -63,14 +64,17 @@ const archivoBlack = Archivo_Black({
   weight: "400",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // NOTE: Root layout stays server-side; we hydrate a client SessionProvider for `useSession`.
+  // Fetch session server-side to hydrate SessionProvider immediately
+  // This ensures client components have session data on first render
+  const session = await auth();
+
   return (
-    <html lang="en">
+    <html lang="en" data-theme="noir" suppressHydrationWarning>
       <body
         className={cn(
           "antialiased bg-background text-foreground",
@@ -81,10 +85,11 @@ export default function RootLayout({
           quicksand.variable,
           archivoBlack.variable
         )}
+        suppressHydrationWarning
       >
         <ThemeProvider>
-          <AppSessionProvider session={null}>
-            <StudioLayout>
+          <AppSessionProvider session={session}>
+            <StudioLayout session={session}>
               {children}
               <PWAInstallPrompt />
             </StudioLayout>

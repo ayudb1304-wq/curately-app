@@ -8,6 +8,7 @@ import { ShieldAlert, ShieldCheck, Trash2 } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { hardDeleteMyData } from "@/app/_actions/sovereignty";
+import { ProfileEditor } from "@/components/settings/profile-editor";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -71,15 +72,21 @@ export function SovereigntyCenter({ session: sessionProp }: { session?: Session 
             </TabsList>
 
             <TabsContent value="profile">
-              <div className="space-y-4">
+              <div className="space-y-6">
+                {/* Profile Editor */}
+                <div className="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20 p-4 sm:p-6">
+                  <ProfileEditor session={session} />
+                </div>
+
+                {/* Golden Record ID */}
                 <div className="rounded-2xl border border-zinc-200/60 dark:border-zinc-800/80 bg-white/60 dark:bg-zinc-950/20 p-4">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <div className="text-sm font-black text-zinc-950 dark:text-zinc-50 truncate">
-                        {session?.user?.name ?? session?.user?.email ?? "Creator"}
+                      <div className="text-sm font-black text-zinc-950 dark:text-zinc-50">
+                        Identity Graph ID
                       </div>
                       <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                        Golden Record (immutable)
+                        Your immutable Golden Record identifier
                       </div>
                     </div>
                     {internalUid ? (
