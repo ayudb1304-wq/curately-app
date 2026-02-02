@@ -22,8 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased bg-zinc-100 dark:bg-zinc-900">
+    <html lang="en" className="h-full w-full overflow-hidden">
+      <body className="h-full w-full overflow-hidden antialiased bg-white dark:bg-slate-950">
         <ThemeProvider>
           <StudioLayout>
             {children}
