@@ -85,13 +85,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
      * Control which users can sign in
      * Can be extended to implement waitlist or invite-only access
      */
-    async signIn({ account }) {
-      // Allow all sign-ins for now
-      // Future: Check waitlist, verify creator status, etc.
-      if (account?.provider === "google") {
-        // Google accounts are mapped to YOUTUBE platform type in linkAccount event
-        return true;
-      }
+    async signIn() {
+      // Allow all sign-ins for now. Phase 2: Implement waitlist/approval logic.
       return true;
     },
 
@@ -110,6 +105,55 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
 
   events: {
+    /**
+     * Handle post-sign-in events
+     * Ensures refresh tokens are always encrypted on every sign-in
+     * This captures fresh tokens that may be issued on subsequent logins
+     */
+    async signIn({ user, account }) {
+      if (!account) return;
+
+      // Platform normalization: Map provider to PlatformType enum
+      const platformType = account.provider === "google" ? "YOUTUBE" : null;
+
+      // Encrypt refresh_token if present and store securely
+      if (account.refresh_token) {
+        const encryptedRefreshToken = encryptToken(account.refresh_token);
+
+        await prisma.account.update({
+          where: {
+            provider_providerAccountId: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+            },
+          },
+          data: {
+            encrypted_refresh_token: encryptedRefreshToken,
+            platform_type: platformType,
+            // Clear raw refresh_token to prevent plain-text storage
+            refresh_token: null,
+          },
+        });
+
+        console.log(`[Identity Graph] Refresh token refreshed and secured for ${account.provider}`);
+      } else {
+        // Still update platform_type even if no refresh_token
+        await prisma.account.update({
+          where: {
+            provider_providerAccountId: {
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+            },
+          },
+          data: {
+            platform_type: platformType,
+          },
+        });
+      }
+
+      console.log(`[Auth] Sign-in completed for user ${user?.id}: ${account.provider}`);
+    },
+
     /**
      * Handle post-account-link events
      * Encrypts refresh tokens and maps platform types for Identity Graph
